@@ -1,0 +1,123 @@
+#include <iostream>
+
+using namespace std;
+
+bool running = true;
+
+struct node
+{
+	int key;
+	int x;
+	struct node *next;
+};
+
+struct node *PT = new struct node; // HEAD NODE
+struct node *pont;
+struct node *ant;
+ 
+void fetch(int key)
+{
+	ant = PT; pont = NULL;
+	struct node *ptr = (*PT).next;
+	while (ptr != NULL)
+	{
+		if ((*ptr).key < key)
+		{
+			ant = ptr;
+			ptr = (*ptr).next;
+		}
+		else
+		{
+			if ((*ptr).key == key)
+			{
+				pont = ptr;
+			}
+			ptr = NULL;
+		}		
+	}
+}
+
+void add(int key)
+{
+	fetch(key);
+	if (pont == NULL)
+	{
+		struct node *nodeToBeInserted = new struct node;
+		(*nodeToBeInserted).key = key;
+		(*nodeToBeInserted).next = (*ant).next;
+		(*ant).next = nodeToBeInserted;
+	}
+	else
+	{
+		cerr << "Key already exists" << endl;
+	}
+}
+
+void remove(int key)
+{
+	fetch(key);
+	if (pont != NULL)
+	{
+		(*ant).next = (*pont).next;
+		(*pont).next = NULL;
+	}
+	else
+	{
+		cerr << "Key not found" << endl;
+	}
+}
+
+void traverse()
+{
+	struct node *ptr = (*PT).next;
+	while (ptr != NULL)
+	{
+		cout << (*ptr).key << " ";
+		ptr = (*ptr).next;
+	}
+
+	cout << endl;
+}
+
+int main()
+{	
+	(*PT).next = NULL; // Lista vazia, PT representa o nó cabeça e seu próximo é nulo
+	int option, key;
+
+	cout << "MENU" << endl;
+	cout << "1 - Inserir" << endl;
+	cout << "2 - Deletar" << endl;
+	cout << "3 - Listar" << endl;
+	cout << "4 - Sair" << endl;
+	
+	while (running)
+	{		
+		do 
+		{
+			cout << "Escolha: ";
+			cin >> option;
+		} while (option != 1 && option != 2 && option != 3 && option != 4);
+		switch (option)
+		{
+		case 1:
+			cout << "Inserir: ";
+			cin >> key;
+			add(key);
+			break;
+		case 2:
+			cout << "Deletar: ";
+			cin >> key;
+			remove(key);
+			break;
+		case 3:
+			traverse();
+			break;
+		case 4:
+			running = false;
+			break;
+		}
+	}
+
+	system("pause");
+	return 0;
+}
