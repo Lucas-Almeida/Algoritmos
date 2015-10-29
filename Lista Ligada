@@ -81,7 +81,7 @@ void traverse()
 
 int main()
 {	
-	(*PT).next = NULL; // Lista vazia, PT representa o nó cabeça e seu próximo é nulo
+	(*PT).next = NULL; 
 	int option, key;
 
 	cout << "MENU" << endl;
