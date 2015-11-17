@@ -8,7 +8,7 @@ struct node
 	struct node *next;
 };
 
-struct node *top;
+struct node *top = NULL; // Pilha Vazia
 
 void add(int x)
 {
@@ -49,8 +49,6 @@ bool running = true;
 
 int main()
 {
-	top = NULL; // Pilha Vazia
-
 	int option;
 	cout << "MENU" << endl;
 	cout << "1 - Add" << endl;
