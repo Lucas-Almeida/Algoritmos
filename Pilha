@@ -1,0 +1,91 @@
+#include <iostream>
+
+using namespace std;
+
+struct node 
+{
+	int x;
+	struct node *next;
+};
+
+struct node *top;
+
+void add(int x)
+{
+	struct node *newNode = new struct node;
+	(*newNode).next = top;
+	top = newNode;
+	(*newNode).x = x;
+}
+
+void remove()
+{
+	if (top != NULL)
+	{
+		struct node *ptAux = top;
+		top = (*top).next;
+		(*ptAux).next = NULL;
+		delete(ptAux);
+	}
+	else {
+		cout << "Empty Stack" << endl;
+	}
+	
+}
+
+void traverse()
+{
+	struct node *ptAux = top;
+	while (ptAux != NULL)
+	{
+		cout << (*ptAux).x << " ";
+		ptAux = (*ptAux).next;
+	}
+		
+	cout << endl;
+}
+
+bool running = true;
+
+int main()
+{
+	top = NULL; // Pilha Vazia
+
+	int option;
+	cout << "MENU" << endl;
+	cout << "1 - Add" << endl;
+	cout << "2 - Remove" << endl;
+	cout << "3 - Traverse Stack" << endl;
+	cout << "4 - Exit" << endl;
+	
+	while (running)
+	{
+		do
+		{
+			cout << "Input: ";
+			cin >> option;
+		} while (option != 1 && option != 2 && option != 3 && option != 4);
+
+		switch(option)
+		{
+			case 1:
+				int key;
+				cout << "Input key: ";
+				cin >> key;
+				add(key);
+				break;
+			case 2: 
+				remove();
+				break;
+			case 3:
+				traverse();
+				break;
+			case 4:
+				running = false;
+				break;
+		}
+	}	
+
+	system("pause");
+	return 0;
+}
