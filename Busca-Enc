@@ -1,0 +1,189 @@
+#include <cstdlib>
+#include <iostream>
+
+using namespace std;
+
+// Código para listar elementos de um ponteiro
+
+struct Lista // Registro principal
+{
+	int codigo;
+	struct Lista *ptproximo;
+};
+
+// criar os ponteiros globais
+struct Lista *ant;
+struct Lista *pont;
+struct Lista *ptlista = new struct Lista;
+
+// Insere sempre antes do primeiro nó. Feito assim somente para teste.
+
+
+struct Lista* busca_enc(int x)
+{
+	ant = ptlista;
+	struct Lista *ptr = ptlista->ptproximo;
+
+	struct Lista * busca_enc = NULL; // veja opções a criar essa variável
+
+	while (ptr != NULL){
+		if (ptr->codigo < x)
+		{
+			ant = ptr;
+			ptr = ptr->ptproximo;
+		}
+		else {
+			if (ptr->codigo == x) {
+				busca_enc = ptr; // outra opção seria : return ptr
+			}
+			ptr = NULL; // outra opção seria return ptr
+		}
+	}
+	return busca_enc;  // outra opção seria return NULL
+}
+
+Lista* insere(int i)
+{
+	pont = busca_enc(i);
+	if (pont != NULL)
+		return NULL;
+	else
+	{
+		struct Lista * novo = new struct Lista;
+		novo->codigo = i;
+		novo->ptproximo = ant->ptproximo;
+		ant->ptproximo = novo;		
+		ptlista->codigo++;
+		return novo;
+	}	
+}
+
+void remove(int i)
+{
+	pont = busca_enc(i);
+	if (pont != NULL)
+	{
+		(*ant).ptproximo = (*pont).ptproximo;
+		(*pont).ptproximo = NULL;
+		ptlista->codigo--;
+	}
+	else
+	{
+		cerr << "Chave não encontrada" << endl;
+	}
+}
+
+void imprime()
+{
+	struct Lista* p = ptlista->ptproximo; /* variável auxiliar p para percorrer a lista */
+
+	while (p != NULL)
+	{
+		cout << "info = " << p->codigo << endl;
+		p = p->ptproximo;
+	}
+}
+
+bool running = true;
+
+int main()
+
+{
+	// Dá carga em informações do nó-cabeça
+	// Inicialmente a lista tem somente o nó cabeça
+	ptlista->ptproximo = NULL;
+	ptlista->codigo = 0;
+
+	///*
+
+	int option;
+	cout << "MENU" << endl;
+	cout << "1 - Inserir" << endl;
+	cout << "2 - Remover" << endl;
+	cout << "3 - Percorrer" << endl;
+	cout << "4 - Buscar" << endl;
+	cout << "5 - Sair" << endl;
+
+	while (running)
+	{
+		do
+		{
+			cout << "Input: ";
+			cin >> option;
+		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5);
+
+		switch (option)
+		{
+		case 1:
+			int key;
+			cout << "Entre valor a inserir: ";
+			cin >> key;
+			ptlista->ptproximo = insere(key);
+			break;
+		case 2:
+			key;
+			cout << "Entre valor a remover: ";
+			cin >> key;
+			remove(key);
+			break;
+		case 3:
+			imprime();
+			break;
+		case 4:
+			key;
+			cout << "Entre valor a buscar: ";
+			cin >> key;
+			pont = busca_enc(key);
+			cout << "Anterior: " << (*ant).codigo << endl;
+
+			if (pont == NULL){
+				cout << "Codigo não encontrado!" << endl;
+			}
+			else
+			{
+				cout << (*pont).codigo << endl;
+				cout << "Codigo encontrado" << endl;
+			}
+			break;
+		case 5:
+			running = false;
+			break;
+		}
+	}
+	//*/
+
+	/*
+
+	//
+	ptlista->ptproximo = insere(45); // insere na lista o elemento 23 
+	ptlista->ptproximo = insere(23); // insere na lista o elemento 45 
+	ptlista->ptproximo = insere(13); // insere na lista o elemento 13 
+	//
+	//descomentar a inserção abaixo e verificar como dará erro devido ao fato de o busca_enc estar 
+	//preparado para listas ordenadas.
+	//
+	//ptlista->ptproximo = insere(73); // insere na lista o elemento 73   
+
+	ptlista->ptproximo = insere(10);
+	remove(10);
+
+	imprime();
+
+	pont = busca_enc(10);
+
+	cout << (*ant).codigo << endl;
+
+	if (pont == NULL){
+		cout << "Codigo não encontrado!" << endl;
+	}
+	else
+	{
+		cout << (*pont).codigo << endl;
+		cout << "Codigo encontrado" << endl;
+	}	
+
+	*/
+
+	system("pause");
+	return 0;
+}
