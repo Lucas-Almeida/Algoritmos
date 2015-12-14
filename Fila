@@ -2,59 +2,53 @@
 
 using namespace std;
 
-struct node
+struct queue
 {
 	int x;
-	struct node *next;
+	struct queue *next;
 };
 
-struct node *enqueue = NULL; // Fila VAZIA
-struct node *dequeue = NULL;
+struct queue *first = NULL;
+struct queue *last = NULL;
 
-void add(int x)
+
+void enqueue(int x)
 {
-	/*
-	struct node *newNode = new struct node;
-	(*newNode).next = NULL;
+	struct queue *newNode = new struct queue;
 	(*newNode).x = x;
-	
-	if (enqueue == NULL)
-	{
-		dequeue = newNode;
-		enqueue = newNode;
-	}
-	else
-	{
-		(*dequeue).next = newNode;
-		dequeue = newNode;
-	}     
-	*/
-	
-	if (enqueue == NULL)
-	{
-		struct node *newNode = new struct node;
-		enqueue = newNode;
-		dequeue = newNode;
-		(*newNode).next = NULL;
-	}
-	else
-	{
-		struct node *newNode = new struct node;
-		(*dequeue).next = newNode;
-		(*newNode).next = NULL;
-		dequeue = newNode;
-	}
-	
+	(*newNode).next = NULL;
+	if (last != NULL)
+		(*last).next = newNode;
+	else 
+		first = newNode;
+	last = newNode;	
 }
 
-void remove()
+void dequeue()
 {
-
+	struct queue *pt;
+	if (first != NULL)
+	{	
+		pt = first;
+		first = (*first).next;
+		if (first == NULL) last = NULL;
+		delete(pt);
+	}	
+	else {
+		cout << "Queue is empty." << endl;
+	}
 }
 
 void traverse()
 {
+	struct queue *ptAux = first;
+	while (ptAux != NULL)
+	{
+		cout << (*ptAux).x << " ";
+		ptAux = (*ptAux).next;
+	}
 
+	cout << endl;
 }
 
 bool running = true;
@@ -63,9 +57,9 @@ int main()
 {
 	int option;
 	cout << "MENU" << endl;
-	cout << "1 - Add" << endl;
-	cout << "2 - Remove" << endl;
-	cout << "3 - Traverse Stack" << endl;
+	cout << "1 - Enqueue" << endl;
+	cout << "2 - Dequeue" << endl;
+	cout << "3 - Traverse Queue" << endl;
 	cout << "4 - Exit" << endl;
 
 	while (running)
@@ -82,10 +76,10 @@ int main()
 			int key;
 			cout << "Input key: ";
 			cin >> key;
-			add(key);
+			enqueue(key);
 			break;
 		case 2:
-			remove();
+			dequeue();
 			break;
 		case 3:
 			traverse();
