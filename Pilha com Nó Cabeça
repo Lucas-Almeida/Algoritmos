@@ -1,0 +1,91 @@
+#include <iostream>
+
+using namespace std;
+
+struct node 
+{
+	int x;
+	struct node *next;
+};
+
+struct node *head = new struct node;
+struct node *top = head;
+
+void add(int x)
+{
+	struct node *newNode = new struct node;
+	struct node *ptAux = (*top).next;
+	(*newNode).next = ptAux;
+	(*top).next = newNode;
+	(*newNode).x = x;
+}
+
+void remove()
+{
+	if ((*head).next == NULL)
+	{
+		cout << "Only head node in the stack" << endl;
+	}
+	else {
+		struct node *ptAux = (*top).next;
+		(*top).next = (*ptAux).next;
+		delete(ptAux);
+	}
+}
+
+void traverse()
+{
+	struct node *ptAux = top;
+	while (ptAux != NULL)
+	{
+		cout << (*ptAux).x << " ";
+		ptAux = (*ptAux).next;
+	}
+
+	cout << endl;
+}
+
+bool running = true;
+
+int main()
+{
+	(*head).next = NULL; // PILHA VAZIA
+	(*head).x = 1;
+	int option;
+	cout << "MENU" << endl;
+	cout << "1 - Add" << endl;
+	cout << "2 - Remove" << endl;
+	cout << "3 - Traverse Stack" << endl;
+	cout << "4 - Exit" << endl;
+
+	while (running)
+	{
+		do
+		{
+			cout << "Input: ";
+			cin >> option;
+		} while (option != 1 && option != 2 && option != 3 && option != 4);
+
+		switch (option)
+		{
+		case 1:
+			int key;
+			cout << "Input key: ";
+			cin >> key;
+			add(key);
+			break;
+		case 2:
+			remove();
+			break;
+		case 3:
+			traverse();
+			break;
+		case 4:
+			running = false;
+			break;
+		}
+	}
+
+	system("pause");
+	return 0;
+}
