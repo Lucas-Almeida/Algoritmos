@@ -1,0 +1,99 @@
+/* Elaborar uma estrutura de dados do tipo fila com nó cabeça*/
+
+#include <iostream>
+
+using namespace std;
+
+struct queue
+{
+int x;
+struct queue *next;
+};
+
+struct queue *head = new struct queue; // nó cabeça
+struct queue *first = head;
+struct queue *last = head;
+
+void enqueue(int x)
+{
+	struct queue *newNode = new struct queue;
+	(*newNode).x = x;
+	(*newNode).next = NULL;
+	if (last != NULL)
+		(*last).next = newNode;
+	else
+		(*head).next = newNode;
+	last = newNode;
+}
+
+void dequeue()
+{
+	struct queue *pt;
+	if ((*first).next != NULL)
+	{
+		pt = (*first).next;
+		(*first).next = (*pt).next;
+		if ((*first).next == NULL) last = first;
+		delete(pt);
+	}
+	else {
+		cout << "Queue is empty." << endl;
+	}
+}
+
+void traverse()
+{
+	struct queue *ptAux = first;
+	while (ptAux != NULL)
+	{
+		cout << (*ptAux).x << " ";
+		ptAux = (*ptAux).next;
+	}
+
+	cout << endl;
+}
+
+bool running = true;
+
+int main()
+{
+	(*head).next = NULL; // FILA VAZIA
+	(*head).x = 1;
+	int option;
+	cout << "MENU" << endl;
+	cout << "1 - Enqueue" << endl;
+	cout << "2 - Dequeue" << endl;
+	cout << "3 - Traverse Queue" << endl;
+	cout << "4 - Exit" << endl;
+
+	while (running)
+	{
+		do
+		{
+			cout << "Input: ";
+			cin >> option;
+		} while (option != 1 && option != 2 && option != 3 && option != 4);
+
+		switch (option)
+		{
+		case 1:
+			int key;
+			cout << "Input key: ";
+			cin >> key;
+			enqueue(key);
+			break;
+		case 2:
+			dequeue();
+			break;
+		case 3:
+			traverse();
+			break;
+		case 4:
+			running = false;
+			break;
+		}
+	}
+
+	system("pause");
+	return 0;
+}
