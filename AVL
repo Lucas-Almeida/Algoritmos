@@ -1,0 +1,109 @@
+#include <iostream>
+
+using namespace std;
+
+struct no
+{
+	struct no* pai = NULL;
+	struct no* esquerda = NULL;
+	struct no* direita = NULL;
+	int val;
+};
+
+struct no* raiz = NULL;
+
+void insereBinBusca(struct no* raiz, int val)
+{
+	if (raiz == NULL)
+	{
+		raiz = new struct no;
+		(*raiz).val = val;
+	}
+	else
+	{
+		if ((*raiz).val >= val)
+		{
+			if ((*raiz).esquerda == NULL)
+			{
+				(*raiz).esquerda = new struct no;
+				raiz->esquerda->val = val;
+			}
+			else
+				insereBinBusca((*raiz).esquerda, val);
+		}
+		else
+		{
+			if ((*raiz).direita == NULL)
+			{
+				(*raiz).direita = new struct no;
+				raiz->direita->val = val;
+			}
+			else
+			{
+				insereBinBusca(raiz->direita, val);
+			}
+		}
+	}
+}
+
+void inOrder(struct no* noh)
+{
+	inOrder((*noh).esquerda);
+	cout << (*noh).val << endl;
+	inOrder((*noh).direita);
+}
+
+void preOrder(struct no* noh)
+{
+	cout << (*noh).val << endl;
+	inOrder((*noh).esquerda);
+	inOrder((*noh).direita);
+}
+
+void postOrder(struct no* noh)
+{
+	inOrder((*noh).esquerda);
+	inOrder((*noh).direita);
+	cout << (*noh).val << endl;
+}
+
+bool running = true;
+
+int main()
+{
+	int option;
+	int key;
+
+	while (running)
+	{
+		do {
+			cout << "MENU" << endl;
+			cout << "1: Inserir " << " - "; cout << "2: Excluir " << " - "; cout << "3: Em Ordem " << " - "; cout << "4: Pre Order " << " - "; cout << "5: Post Order " << endl;
+			cout << "Escolha: ";
+			cin >> option;
+		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5);
+		switch (option)
+		{
+		case 1:
+			cout << "Insira uma chave: ";
+			cin >> key;
+			insereBinBusca(raiz, key);
+			break;
+		case 2:
+			cout << "Insira uma chave: ";
+			
+			break;
+		case 3:
+			inOrder(raiz);
+			break;
+		case 4:
+			
+			break;
+		case 5:
+			running = false;
+			break;
+		}
+	}
+
+	return 0;
+}
