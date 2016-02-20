@@ -29,6 +29,7 @@ void insereBinBusca(struct no* noh, int val)
 			{
 				(*noh).esquerda = new struct no;
 				(*(*noh).esquerda).val = val;
+				noh->esquerda->pai = noh;
 			}
 			else
 				insereBinBusca((*noh).esquerda, val);
@@ -39,6 +40,7 @@ void insereBinBusca(struct no* noh, int val)
 			{
 				(*noh).direita = new struct no;
 				(*(*noh).direita).val = val;
+				noh->direita->pai = noh;
 			}
 			else
 			{
@@ -48,7 +50,7 @@ void insereBinBusca(struct no* noh, int val)
 	}
 }
 
-int menorValor(struct no* menor)
+/*int menorValor(struct no* menor)
 {
 	if (raiz == NULL)
 		cout << "AVL vazia" << endl;
@@ -59,8 +61,25 @@ int menorValor(struct no* menor)
 		return menor->val;
 	}
 }
+*/
 
-int maiorValor(struct no* maior)
+no* menorValorP(struct no* menor)
+{
+	if (raiz == NULL)
+	{
+		cout << "AVL vazia" << endl;
+		exit(0);
+	}
+		
+	else
+	{
+		while (menor->esquerda != NULL)
+			menor = menor->esquerda;
+		return menor;
+	}
+}
+
+/*int maiorValor(struct no* maior)
 {
 	if (raiz == NULL)
 		cout << "AVL vazia" << endl;
@@ -69,6 +88,22 @@ int maiorValor(struct no* maior)
 		while (maior->direita != NULL)
 			maior = maior->direita;
 		return maior->val;
+	}
+}
+*/
+
+no* maiorValorP(struct no* maior)
+{
+	if (raiz == NULL)
+	{
+		cout << "AVL vazia" << endl;
+		exit(0);
+	}
+	else
+	{
+		while (maior->direita != NULL)
+			maior = maior->direita;
+		return maior;
 	}
 }
 
@@ -84,15 +119,19 @@ void removeBinBusca(no *noh, int val)
 	{
 		if (noh->esquerda == NULL && noh->direita == NULL)
 		{
+			if (noh->pai->val > noh->val)
+				noh->pai->esquerda = NULL;
+			else
+				noh->pai->direita = NULL;
 			delete(noh);
 		}
 		else {
 			if (noh->esquerda != NULL)
-				aux->val = maiorValor(noh->esquerda);
+				aux = maiorValorP(noh->esquerda);
 			else
-				aux->val = menorValor(noh->direita);
+				aux = menorValorP(noh->direita);
 			noh->val = aux->val;
-			removeBinBusca(noh, noh->val);
+			removeBinBusca(aux, aux->val);
 		}
 	}
 	else {
@@ -105,29 +144,44 @@ void removeBinBusca(no *noh, int val)
 
 void inOrder(struct no* noh)
 {
-	if(noh->esquerda != NULL)
-		inOrder((*noh).esquerda);
-	cout << (*noh).val << endl;
-	if(noh->direita != NULL)
-		inOrder((*noh).direita);
+	if (raiz == NULL)
+	{
+		cout << "AVL vazia" << endl;
+		exit(0);
+	}
+	else {
+		if (noh->esquerda != NULL)
+			inOrder((*noh).esquerda);
+		cout << (*noh).val << " " << endl;
+		if (noh->direita != NULL)
+			inOrder((*noh).direita);
+	}		
 }
 
 void preOrder(struct no* noh)
 {
-	cout << (*noh).val << endl;
-	if (noh->esquerda != NULL)
-		inOrder((*noh).esquerda);
-	if (noh->direita != NULL)
-		inOrder((*noh).direita);
+	if (raiz != NULL)
+	{
+		cout << (*noh).val << " " << endl;
+		if (noh->esquerda != NULL)
+			inOrder((*noh).esquerda);
+		if (noh->direita != NULL)
+			inOrder((*noh).direita);
+	}
+	else cout << "AVL vazia" << endl;
 }
 
 void postOrder(struct no* noh)
 {
-	if (noh->esquerda != NULL)
-		inOrder((*noh).esquerda);
-	if (noh->direita != NULL)
-		inOrder((*noh).direita);
-	cout << (*noh).val << endl;
+	if (raiz != NULL)
+	{
+		if (noh->esquerda != NULL)
+			inOrder((*noh).esquerda);
+		if (noh->direita != NULL)
+			inOrder((*noh).direita);
+		cout << (*noh).val << endl;
+	}
+	else cout << "AVL vazia" << endl;
 }
 
 bool running = true;
@@ -168,7 +222,7 @@ int main()
 				postOrder(raiz);
 				break;
 			case 6:
-				cout << "Menor valor: " << menorValor(raiz) << endl;
+				cout << "Menor valor: " << menorValorP(raiz) << endl;
 				break;
 			}
 		}
