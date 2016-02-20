@@ -35,7 +35,7 @@ void insereBinBusca(struct no* noh, int val)
 	{
 		raiz = new struct no;
 		raiz->val = val;
-		fb(raiz);
+		//fb(raiz);
 	}
 	else
 	{
@@ -46,7 +46,7 @@ void insereBinBusca(struct no* noh, int val)
 				(*noh).esquerda = new struct no;
 				(*(*noh).esquerda).val = val;
 				noh->esquerda->pai = noh;				
-				fb(noh);
+				//fb(noh);
 			}
 			else
 				insereBinBusca((*noh).esquerda, val);
@@ -58,7 +58,7 @@ void insereBinBusca(struct no* noh, int val)
 				(*noh).direita = new struct no;
 				(*(*noh).direita).val = val;
 				noh->direita->pai = noh;
-				fb(noh);
+				//fb(noh);
 			}
 			else
 			{
