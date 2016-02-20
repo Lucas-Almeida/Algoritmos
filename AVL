@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -11,59 +12,121 @@ struct no
 };
 
 struct no* raiz = NULL;
+struct no* aux = NULL;
 
-void insereBinBusca(struct no* raiz, int val)
+void insereBinBusca(struct no* noh, int val)
 {
 	if (raiz == NULL)
 	{
 		raiz = new struct no;
-		(*raiz).val = val;
+		raiz->val = val;
 	}
 	else
 	{
-		if ((*raiz).val >= val)
+		if ((*noh).val >= val)
 		{
-			if ((*raiz).esquerda == NULL)
+			if ((*noh).esquerda == NULL)
 			{
-				(*raiz).esquerda = new struct no;
-				raiz->esquerda->val = val;
+				(*noh).esquerda = new struct no;
+				(*(*noh).esquerda).val = val;
 			}
 			else
-				insereBinBusca((*raiz).esquerda, val);
+				insereBinBusca((*noh).esquerda, val);
 		}
 		else
 		{
-			if ((*raiz).direita == NULL)
+			if ((*noh).direita == NULL)
 			{
-				(*raiz).direita = new struct no;
-				raiz->direita->val = val;
+				(*noh).direita = new struct no;
+				(*(*noh).direita).val = val;
 			}
 			else
 			{
-				insereBinBusca(raiz->direita, val);
+				insereBinBusca(noh->direita, val);
 			}
 		}
 	}
 }
 
+int menorValor(struct no* menor)
+{
+	if (raiz == NULL)
+		cout << "AVL vazia" << endl;
+	else
+	{
+		while (menor->esquerda != NULL)
+			menor = menor->esquerda;
+		return menor->val;
+	}
+}
+
+int maiorValor(struct no* maior)
+{
+	if (raiz == NULL)
+		cout << "AVL vazia" << endl;
+	else
+	{
+		while (maior->direita != NULL)
+			maior = maior->direita;
+		return maior->val;
+	}
+}
+
+void removeBinBusca(no *noh, int val)
+{	
+	if (raiz == NULL)
+	{
+		cout << "AVL vazia" << endl;
+		exit(0);
+	}		
+	
+	if (noh->val == val)
+	{
+		if (noh->esquerda == NULL && noh->direita == NULL)
+		{
+			delete(noh);
+		}
+		else {
+			if (noh->esquerda != NULL)
+				aux->val = maiorValor(noh->esquerda);
+			else
+				aux->val = menorValor(noh->direita);
+			noh->val = aux->val;
+			removeBinBusca(noh, noh->val);
+		}
+	}
+	else {
+		if (noh->val > val)
+			removeBinBusca(noh->esquerda, val);
+		else
+			removeBinBusca(noh->direita, val);
+	}	
+}
+
 void inOrder(struct no* noh)
 {
-	inOrder((*noh).esquerda);
+	if(noh->esquerda != NULL)
+		inOrder((*noh).esquerda);
 	cout << (*noh).val << endl;
-	inOrder((*noh).direita);
+	if(noh->direita != NULL)
+		inOrder((*noh).direita);
 }
 
 void preOrder(struct no* noh)
 {
 	cout << (*noh).val << endl;
-	inOrder((*noh).esquerda);
-	inOrder((*noh).direita);
+	if (noh->esquerda != NULL)
+		inOrder((*noh).esquerda);
+	if (noh->direita != NULL)
+		inOrder((*noh).direita);
 }
 
 void postOrder(struct no* noh)
 {
-	inOrder((*noh).esquerda);
-	inOrder((*noh).direita);
+	if (noh->esquerda != NULL)
+		inOrder((*noh).esquerda);
+	if (noh->direita != NULL)
+		inOrder((*noh).direita);
 	cout << (*noh).val << endl;
 }
 
@@ -78,32 +141,37 @@ int main()
 	{
 		do {
 			cout << "MENU" << endl;
-			cout << "1: Inserir " << " - "; cout << "2: Excluir " << " - "; cout << "3: Em Ordem " << " - "; cout << "4: Pre Order " << " - "; cout << "5: Post Order " << endl;
+			cout << "1: Inserir " << " - "; cout << "2: Excluir " << " - "; cout << "3: Em Ordem " << " - "; cout << "4: Pre Order " << " - "; 
+			cout << "5: Post Order " << " - " << "6: Menor Valor " << endl;
 			cout << "Escolha: ";
 			cin >> option;
-		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5);
+		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6);
 		switch (option)
 		{
-		case 1:
-			cout << "Insira uma chave: ";
-			cin >> key;
-			insereBinBusca(raiz, key);
-			break;
-		case 2:
-			cout << "Insira uma chave: ";
-			
-			break;
-		case 3:
-			inOrder(raiz);
-			break;
-		case 4:
-			
-			break;
-		case 5:
-			running = false;
-			break;
+			case 1:
+				cout << "Insira uma chave: ";
+				cin >> key;
+				insereBinBusca(raiz, key);
+				break;
+			case 2:
+				cout << "Insira uma chave: ";
+				cin >> key;
+				removeBinBusca(raiz, key);
+				break;
+			case 3:
+				inOrder(raiz);
+				break;
+			case 4:
+				preOrder(raiz);
+				break;
+			case 5:
+				postOrder(raiz);
+				break;
+			case 6:
+				cout << "Menor valor: " << menorValor(raiz) << endl;
+				break;
+			}
 		}
-	}
-
+	system("pause");
 	return 0;
 }
