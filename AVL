@@ -8,11 +8,26 @@ struct no
 	struct no* pai = NULL;
 	struct no* esquerda = NULL;
 	struct no* direita = NULL;
-	int val;
+	int val, fb, altura;
 };
 
 struct no* raiz = NULL;
 struct no* aux = NULL;
+
+void insereBinBusca(struct no* noh, int val);
+void removeBinBusca(no *noh, int val);
+void inOrder(struct no* noh);
+void preOrder(struct no* noh);
+void postOrder(struct no* noh);
+void rotDirEsq(struct no* noh);
+void rotEsqDir(struct no* noh);
+void rotDir(struct no* noh);
+void rotEsq(struct no* noh);
+void balancear(struct no* noh);
+void fb(struct no* noh);
+int altura(struct no* noh);
+no* menorValorP(struct no* menor);
+no* maiorValorP(struct no* maior);
 
 void insereBinBusca(struct no* noh, int val)
 {
@@ -20,6 +35,7 @@ void insereBinBusca(struct no* noh, int val)
 	{
 		raiz = new struct no;
 		raiz->val = val;
+		fb(raiz);
 	}
 	else
 	{
@@ -29,7 +45,8 @@ void insereBinBusca(struct no* noh, int val)
 			{
 				(*noh).esquerda = new struct no;
 				(*(*noh).esquerda).val = val;
-				noh->esquerda->pai = noh;
+				noh->esquerda->pai = noh;				
+				fb(noh);
 			}
 			else
 				insereBinBusca((*noh).esquerda, val);
@@ -41,6 +58,7 @@ void insereBinBusca(struct no* noh, int val)
 				(*noh).direita = new struct no;
 				(*(*noh).direita).val = val;
 				noh->direita->pai = noh;
+				fb(noh);
 			}
 			else
 			{
@@ -50,71 +68,14 @@ void insereBinBusca(struct no* noh, int val)
 	}
 }
 
-/*int menorValor(struct no* menor)
-{
-	if (raiz == NULL)
-		cout << "AVL vazia" << endl;
-	else
-	{
-		while (menor->esquerda != NULL)
-			menor = menor->esquerda;
-		return menor->val;
-	}
-}
-*/
-
-no* menorValorP(struct no* menor)
-{
-	if (raiz == NULL)
-	{
-		cout << "AVL vazia" << endl;
-		exit(0);
-	}
-		
-	else
-	{
-		while (menor->esquerda != NULL)
-			menor = menor->esquerda;
-		return menor;
-	}
-}
-
-/*int maiorValor(struct no* maior)
-{
-	if (raiz == NULL)
-		cout << "AVL vazia" << endl;
-	else
-	{
-		while (maior->direita != NULL)
-			maior = maior->direita;
-		return maior->val;
-	}
-}
-*/
-
-no* maiorValorP(struct no* maior)
-{
-	if (raiz == NULL)
-	{
-		cout << "AVL vazia" << endl;
-		exit(0);
-	}
-	else
-	{
-		while (maior->direita != NULL)
-			maior = maior->direita;
-		return maior;
-	}
-}
-
 void removeBinBusca(no *noh, int val)
-{	
+{
 	if (raiz == NULL)
 	{
 		cout << "AVL vazia" << endl;
 		exit(0);
-	}		
-	
+	}
+
 	if (noh->val == val)
 	{
 		if (noh->esquerda == NULL && noh->direita == NULL)
@@ -139,7 +100,62 @@ void removeBinBusca(no *noh, int val)
 			removeBinBusca(noh->esquerda, val);
 		else
 			removeBinBusca(noh->direita, val);
-	}	
+	}
+}
+
+int menorValor(struct no* menor)
+{
+	if (raiz == NULL)
+		cout << "AVL vazia" << endl;
+	else
+	{
+		while (menor->esquerda != NULL)
+			menor = menor->esquerda;
+		return menor->val;
+	}
+}
+
+no* menorValorP(struct no* menor)
+{
+	if (raiz == NULL)
+	{
+		cout << "AVL vazia" << endl;
+		exit(0);
+	}
+		
+	else
+	{
+		while (menor->esquerda != NULL)
+			menor = menor->esquerda;
+		return menor;
+	}
+}
+
+int maiorValor(struct no* maior)
+{
+	if (raiz == NULL)
+		cout << "AVL vazia" << endl;
+	else
+	{
+		while (maior->direita != NULL)
+			maior = maior->direita;
+		return maior->val;
+	}
+}
+
+no* maiorValorP(struct no* maior)
+{
+	if (raiz == NULL)
+	{
+		cout << "AVL vazia" << endl;
+		exit(0);
+	}
+	else
+	{
+		while (maior->direita != NULL)
+			maior = maior->direita;
+		return maior;
+	}
 }
 
 void inOrder(struct no* noh)
@@ -184,6 +200,79 @@ void postOrder(struct no* noh)
 	else cout << "AVL vazia" << endl;
 }
 
+void fb(struct no* noh)
+{
+	if (noh == NULL) return;
+
+	noh->fb = altura(noh->esquerda) - altura(noh->direita);
+	if (noh->fb <= -2 || noh->fb >= 2)
+		balancear(noh);
+	else
+		fb(noh->pai);
+}
+
+int altura(struct no* noh)
+{
+	if (raiz == NULL) return 0;
+
+	int he = altura(noh->esquerda);
+	int hd = altura(noh->direita);
+	int maior;
+	if (he >= hd) maior = he;
+	else maior = hd;
+
+	return 1 + maior;
+}
+
+void rotDirEsq(struct no* noh)
+{
+	rotDir(noh->direita);
+	rotEsq(noh);
+}
+
+void rotEsqDir(struct no* noh)
+{
+	rotEsq(noh->esquerda);
+	rotDir(noh);
+}
+
+void rotEsq(struct no* noh)
+{
+	noh->direita->pai = noh->pai;
+	noh->pai = noh->direita;
+	if (noh->direita->esquerda != NULL)
+		noh->direita->esquerda->pai = noh;
+	noh->direita = noh->direita->esquerda;
+	noh->pai->esquerda = noh;
+	if (noh->pai->pai->direita == noh && noh->pai->pai != NULL)
+		noh->pai->pai->direita = noh->pai;
+	else if (noh->pai->pai != NULL) 
+		noh->pai->pai->esquerda = noh->pai;
+}
+
+void rotDir(struct no* noh)
+{
+	noh->esquerda->pai = noh->pai;
+	noh->pai = noh->esquerda;
+	if (noh->esquerda->direita != NULL)
+		noh->esquerda->direita->pai = noh;
+	noh->esquerda = noh->esquerda->direita;
+	noh->pai->direita = noh;
+	if (noh->pai->pai->esquerda == noh && noh->pai->pai != NULL) 
+		noh->pai->pai->esquerda = noh->pai;
+	else if (noh->pai->pai != NULL) 
+		noh->pai->pai->direita = noh->pai;
+}
+
+void balancear(struct no* noh)
+{
+	if (noh == NULL)
+		cout << "AVL vazia" << endl;
+	else {
+		 
+	}
+}
+
 bool running = true;
 
 int main()
@@ -196,10 +285,10 @@ int main()
 		do {
 			cout << "MENU" << endl;
 			cout << "1: Inserir " << " - "; cout << "2: Excluir " << " - "; cout << "3: Em Ordem " << " - "; cout << "4: Pre Order " << " - "; 
-			cout << "5: Post Order " << " - " << "6: Menor Valor " << endl;
+			cout << "5: Post Order " << " - " << "6: Menor Valor " << " - " << "7: Maior valor" << " - " << "8: Sair" << endl;
 			cout << "Escolha: ";
 			cin >> option;
-		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6);
+		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 && option != 7 && option != 8);
 		switch (option)
 		{
 			case 1:
@@ -222,7 +311,13 @@ int main()
 				postOrder(raiz);
 				break;
 			case 6:
-				cout << "Menor valor: " << menorValorP(raiz) << endl;
+				cout << "Menor valor: " << menorValor(raiz) << endl;
+				break;
+			case 7:
+				cout << "Maior valor: " << maiorValor(raiz) << endl;
+				break;
+			case 8:
+				running = false;
 				break;
 			}
 		}
