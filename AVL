@@ -34,8 +34,8 @@ void insereBinBusca(struct no* noh, int val)
 	if (raiz == NULL)
 	{
 		raiz = new struct no;
-		raiz->val = val;	
-		fb(raiz);
+		raiz->val = val;
+		raiz->fb = 0;
 	}
 	else
 	{
@@ -45,7 +45,7 @@ void insereBinBusca(struct no* noh, int val)
 			{
 				noh->esquerda = new struct no;
 				noh->esquerda->val = val;
-				noh->esquerda->pai = noh;				
+				noh->esquerda->pai = noh;
 				fb(noh->esquerda);
 			}
 			else
@@ -100,7 +100,7 @@ void removeBinBusca(no *noh, int val)
 			else
 				removeBinBusca(noh->direita, val);
 		}
-	}	
+	}
 }
 
 int menorValor(struct no* menor)
@@ -164,7 +164,7 @@ void inOrder(struct no* noh)
 		cout << noh->val << " " << endl;
 		if (noh->direita != NULL)
 			inOrder(noh->direita);
-	}		
+	}
 }
 
 void preOrder(struct no* noh)
@@ -210,17 +210,21 @@ void rotEsq(struct no* noh)
 	if (noh == raiz) {
 		noh->direita->pai = NULL;
 		raiz = noh->direita;
+		fb(noh);
 	}
-	noh->direita->pai = noh->pai;
-	noh->pai = noh->direita;
-	if (noh->direita->esquerda != NULL)
-		noh->direita->esquerda->pai = noh;
-	noh->direita = noh->direita->esquerda;
-	noh->pai->esquerda = noh;
-	if (noh->pai->pai != NULL && noh->pai->pai->direita == noh)
-		noh->pai->pai->direita = noh->pai;
-	else if (noh->pai->pai != NULL) 
-		noh->pai->pai->esquerda = noh->pai;
+	else {
+		noh->direita->pai = noh->pai;
+		noh->pai = noh->direita;
+		if (noh->direita->esquerda != NULL)
+			noh->direita->esquerda->pai = noh;
+		noh->direita = noh->direita->esquerda;
+		noh->pai->esquerda = noh;
+		if (noh->pai->pai != NULL && noh->pai->pai->direita == noh)
+			noh->pai->pai->direita = noh->pai;
+		else if (noh->pai->pai != NULL)
+			noh->pai->pai->esquerda = noh->pai;
+		fb(noh);
+	}
 }
 
 void rotDir(struct no* noh)
@@ -237,14 +241,15 @@ void rotDir(struct no* noh)
 	noh->pai->direita = noh;
 	if (noh->pai->pai != NULL && noh->pai->pai->esquerda == noh)
 		noh->pai->pai->esquerda = noh->pai;
-	else if (noh->pai->pai != NULL) 
+	else if (noh->pai->pai != NULL)
 		noh->pai->pai->direita = noh->pai;
+	fb(noh);
 }
 
 void fb(struct no* noh)
 {
 	if (noh == NULL) return;
-	noh->fb = altura(noh->direita) - altura(noh->esquerda); 
+	noh->fb = altura(noh->direita) - altura(noh->esquerda);
 	if (noh->fb <= -2 || noh->fb >= 2)
 		balancear(noh);
 	else
@@ -261,20 +266,27 @@ int altura(struct no* noh)
 	return 1 + hd;
 }
 
-void balancear(struct no* noh){
+void balancear(struct no* noh) {
 	if (noh->fb >= 2) {
 		int d = noh->fb - noh->direita->fb;
 		if (d < 0) d *= -1;
-		if (d < 3) rotEsq(noh); 
+		if (d < 3) {
+			rotEsq(noh);
+			fb(noh->esquerda);		
+		}
+		
 		else rotDirEsq(noh);
 	}
 	else {
 		int d = noh->fb - noh->esquerda->fb;
 		if (d < 0) d *= -1;
-		if (d < 3) rotDir(noh);
-		if (d < 3) rotDir(noh);
+		if (d < 3) {
+			rotDir(noh);
+			fb(noh->direita);
+		}
+		
 		else rotEsqDir(noh);
-	}	
+	}
 }
 
 void imprimirFB(struct no* noh)
@@ -303,46 +315,46 @@ int main()
 	{
 		do {
 			cout << "MENU" << endl;
-			cout << "1: Inserir " << " - "; cout << "2: Excluir " << " - "; cout << "3: Em Ordem " << " - "; cout << "4: Pre Order " << " - "; 
-			cout << "5: Post Order " << " - " << "6: Menor Valor " << " - " << "7: Maior valor" << " - " << "8: Imprimir FB's"<< " - " << "9: Sair" << endl;
+			cout << "1: Inserir " << " - "; cout << "2: Excluir " << " - "; cout << "3: Em Ordem " << " - "; cout << "4: Pre Order " << " - ";
+			cout << "5: Post Order " << " - " << "6: Menor Valor " << " - " << "7: Maior valor" << " - " << "8: Imprimir FB's" << " - " << "9: Sair" << endl;
 			cout << "Escolha: ";
 			cin >> option;
 		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 && option != 7 && option != 8 && option != 9);
 		switch (option)
 		{
-			case 1:
-				cout << "Insira uma chave: ";
-				cin >> key;
-				insereBinBusca(raiz, key);
-				break;
-			case 2:
-				cout << "Insira uma chave: ";
-				cin >> key;
-				removeBinBusca(raiz, key);
-				break;
-			case 3:
-				inOrder(raiz);
-				break;
-			case 4:
-				preOrder(raiz);
-				break;
-			case 5:
-				postOrder(raiz);
-				break;
-			case 6:
-				cout << "Menor valor: " << menorValor(raiz) << endl;
-				break;
-			case 7:
-				cout << "Maior valor: " << maiorValor(raiz) << endl;
-				break;
-			case 8:
-				imprimirFB(raiz);
-				break;
-			case 9:
-				running = false;
-				break;
-			}
+		case 1:
+			cout << "Insira uma chave: ";
+			cin >> key;
+			insereBinBusca(raiz, key);
+			break;
+		case 2:
+			cout << "Insira uma chave: ";
+			cin >> key;
+			removeBinBusca(raiz, key);
+			break;
+		case 3:
+			inOrder(raiz);
+			break;
+		case 4:
+			preOrder(raiz);
+			break;
+		case 5:
+			postOrder(raiz);
+			break;
+		case 6:
+			cout << "Menor valor: " << menorValor(raiz) << endl;
+			break;
+		case 7:
+			cout << "Maior valor: " << maiorValor(raiz) << endl;
+			break;
+		case 8:
+			imprimirFB(raiz);
+			break;
+		case 9:
+			running = false;
+			break;
 		}
+	}
 	system("pause");
 	return 0;
 }
