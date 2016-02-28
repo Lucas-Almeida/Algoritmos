@@ -212,19 +212,17 @@ void rotEsq(struct no* noh)
 		raiz = noh->direita;
 		fb(noh);
 	}
-	else {
-		noh->direita->pai = noh->pai;
-		noh->pai = noh->direita;
-		if (noh->direita->esquerda != NULL)
-			noh->direita->esquerda->pai = noh;
-		noh->direita = noh->direita->esquerda;
-		noh->pai->esquerda = noh;
-		if (noh->pai->pai != NULL && noh->pai->pai->direita == noh)
-			noh->pai->pai->direita = noh->pai;
-		else if (noh->pai->pai != NULL)
-			noh->pai->pai->esquerda = noh->pai;
-		fb(noh);
-	}
+	noh->direita->pai = noh->pai;
+	noh->pai = noh->direita;
+	if (noh->direita->esquerda != NULL)
+		noh->direita->esquerda->pai = noh;
+	noh->direita = noh->direita->esquerda;
+	noh->pai->esquerda = noh;
+	if (noh->pai->pai != NULL && noh->pai->pai->direita == noh)
+		noh->pai->pai->direita = noh->pai;
+	else if (noh->pai->pai != NULL)
+		noh->pai->pai->esquerda = noh->pai;
+	fb(noh);
 }
 
 void rotDir(struct no* noh)
