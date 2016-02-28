@@ -84,6 +84,7 @@ void removeBinBusca(no *noh, int val)
 				else
 					noh->pai->direita = NULL;
 				delete(noh);
+				fb(noh->pai);
 			}
 			else {
 				if (noh->esquerda != NULL)
@@ -161,23 +162,23 @@ void inOrder(struct no* noh)
 	else {
 		if (noh->esquerda != NULL)
 			inOrder(noh->esquerda);
-		cout << noh->val << " " << endl;
+		cout << noh->val << " ";
 		if (noh->direita != NULL)
 			inOrder(noh->direita);
-	}
+	}	
 }
 
 void preOrder(struct no* noh)
 {
 	if (raiz != NULL)
 	{
-		cout << noh->val << " " << endl;
+		cout << noh->val << " ";
 		if (noh->esquerda != NULL)
 			inOrder(noh->esquerda);
 		if (noh->direita != NULL)
 			inOrder(noh->direita);
 	}
-	else cout << "AVL vazia" << endl;
+	else cout << "AVL vazia" << endl;	
 }
 
 void postOrder(struct no* noh)
@@ -188,9 +189,8 @@ void postOrder(struct no* noh)
 			inOrder(noh->esquerda);
 		if (noh->direita != NULL)
 			inOrder(noh->direita);
-		cout << noh->val << endl;
-	}
-	else cout << "AVL vazia" << endl;
+		cout << noh->val << " ";
+	}	else cout << "AVL vazia" << endl;	
 }
 
 void rotDirEsq(struct no* noh)
@@ -210,7 +210,6 @@ void rotEsq(struct no* noh)
 	if (noh == raiz) {
 		noh->direita->pai = NULL;
 		raiz = noh->direita;
-		fb(noh);
 	}
 	noh->direita->pai = noh->pai;
 	noh->pai = noh->direita;
@@ -309,12 +308,13 @@ int main()
 	int option;
 	int key;
 
+	cout << "MENU" << endl;
+	cout << "1: Inserir " << "\n" << "2: Excluir " << "\n" << "3: Em Ordem " << "\n" << "4: Pre Order " << "\n" << "5: Post Order " << "\n" <<
+		"6: Menor Valor " << "\n" << "7: Maior valor" << "\n" << "8: Imprimir FB's: " << "\n" << "9: Sair" << endl;
+
 	while (running)
-	{
-		do {
-			cout << "MENU" << endl;
-			cout << "1: Inserir " << " - "; cout << "2: Excluir " << " - "; cout << "3: Em Ordem " << " - "; cout << "4: Pre Order " << " - ";
-			cout << "5: Post Order " << " - " << "6: Menor Valor " << " - " << "7: Maior valor" << " - " << "8: Imprimir FB's" << " - " << "9: Sair" << endl;
+	{		
+		do {			
 			cout << "Escolha: ";
 			cin >> option;
 		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 && option != 7 && option != 8 && option != 9);
@@ -332,12 +332,15 @@ int main()
 			break;
 		case 3:
 			inOrder(raiz);
+			cout << endl;
 			break;
 		case 4:
 			preOrder(raiz);
+			cout << endl;
 			break;
 		case 5:
 			postOrder(raiz);
+			cout << endl;
 			break;
 		case 6:
 			cout << "Menor valor: " << menorValor(raiz) << endl;
