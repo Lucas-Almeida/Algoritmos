@@ -11,8 +11,8 @@ struct no
 	int val, altura, fb;
 };
 
-struct no* aux = nullptr; // Usado na função de remoção
-struct no* raiz = nullptr;
+no* raiz = nullptr;
+no* aux = nullptr;
 
 void insereBinBusca(struct no* noh, int val);
 void removeBinBusca(no *noh, int val);
@@ -78,14 +78,12 @@ void removeBinBusca(no *noh, int val)
 		if (noh->val == val)
 		{
 			if (noh->esquerda == NULL && noh->direita == NULL)
-			{
-				if (noh->pai->val > noh->val)
-					noh->pai->esquerda = NULL;
-				else
-					noh->pai->direita = NULL;
+			{				
+				no* pai = noh->pai;
+				if (pai->esquerda == noh) pai->esquerda = NULL;
+				else pai->direita = NULL;
 				delete(noh);
-				fb(noh->pai);
-			}
+			}			
 			else {
 				if (noh->esquerda != NULL)
 					aux = maiorValorP(noh->esquerda);
