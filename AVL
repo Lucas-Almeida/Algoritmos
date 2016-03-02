@@ -35,7 +35,7 @@ void insereBinBusca(struct no* noh, int val)
 	{
 		raiz = new struct no;
 		raiz->val = val;
-		fb(raiz);
+		raiz->fb = 0;
 	}
 	else
 	{
@@ -84,6 +84,7 @@ void removeBinBusca(no *noh, int val)
 				else
 					noh->pai->direita = NULL;
 				delete(noh);
+				fb(noh->pai);
 			}
 			else {
 				if (noh->esquerda != NULL)
@@ -161,7 +162,7 @@ void inOrder(struct no* noh)
 	else {
 		if (noh->esquerda != NULL)
 			inOrder(noh->esquerda);
-		if(noh != NULL)
+		if (noh != NULL)
 			cout << noh->val << " ";
 		else cout << endl;
 		if (noh->direita != NULL)
@@ -198,7 +199,6 @@ void postOrder(struct no* noh)
 	}
 	else cout << "AVL vazia" << endl;
 }
-
 void rotDirEsq(struct no* noh)
 {
 	rotDir(noh->direita);
@@ -227,10 +227,12 @@ void rotEsq(struct no* noh)
 		noh->pai->pai->direita = noh->pai;
 	else if (noh->pai->pai != NULL)
 		noh->pai->pai->esquerda = noh->pai;
+	fb(noh);
 }
 
 void rotDir(struct no* noh)
 {
+	
 	if (noh == raiz) {
 		noh->esquerda->pai = NULL;
 		raiz = noh->esquerda;
@@ -245,6 +247,8 @@ void rotDir(struct no* noh)
 		noh->pai->pai->esquerda = noh->pai;
 	else if (noh->pai->pai != NULL)
 		noh->pai->pai->direita = noh->pai;
+
+	fb(noh);
 }
 
 void fb(struct no* noh)
@@ -271,14 +275,21 @@ void balancear(struct no* noh) {
 	if (noh->fb >= 2) {
 		int d = noh->fb - noh->direita->fb;
 		if (d < 0) d *= -1;
-		if (d < 3) rotEsq(noh);
+		if (d < 3) {
+			rotEsq(noh);
+			fb(noh->esquerda);		
+		}
+		
 		else rotDirEsq(noh);
 	}
 	else {
 		int d = noh->fb - noh->esquerda->fb;
 		if (d < 0) d *= -1;
-		if (d < 3) rotDir(noh);
-		if (d < 3) rotDir(noh);
+		if (d < 3) {
+			rotDir(noh);
+			fb(noh->direita);
+		}
+		
 		else rotEsqDir(noh);
 	}
 }
@@ -310,8 +321,8 @@ int main()
 		"6: Menor Valor " << "\n" << "7: Maior valor" << "\n" << "8: Imprimir FB's: " << "\n" << "9: Sair" << endl;
 
 	while (running)
-	{
-		do {
+	{		
+		do {			
 			cout << "Escolha: ";
 			cin >> option;
 		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 && option != 7 && option != 8 && option != 9);
