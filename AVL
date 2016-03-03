@@ -5,31 +5,29 @@ using namespace std;
 
 struct no
 {
-	struct no* pai = NULL;
-	struct no* esquerda = NULL;
-	struct no* direita = NULL;
+	no* pai = nullptr; no* esquerda = nullptr; no* direita = nullptr;
 	int val, altura, fb;
 };
 
 no* raiz = nullptr;
 no* aux = nullptr;
 
-void insereBinBusca(struct no* noh, int val);
+void insereBinBusca(no* noh, int val);
 void removeBinBusca(no *noh, int val);
-void inOrder(struct no* noh);
-void preOrder(struct no* noh);
-void postOrder(struct no* noh);
-void rotDirEsq(struct no* noh);
-void rotEsqDir(struct no* noh);
-void rotDir(struct no* noh);
-void rotEsq(struct no* noh);
-void balancear(struct no* noh);
+void inOrder(no* noh);
+void preOrder(no* noh);
+void postOrder(no* noh);
+void rotDirEsq(no* noh);
+void rotEsqDir(no* noh);
+void rotDir(no* noh);
+void rotEsq(no* noh);
+void balancear(no* noh);
 void fb(struct no* noh);
 int altura(struct no* noh);
-no* menorValorP(struct no* menor);
-no* maiorValorP(struct no* maior);
+no* menorValorP(no* menor);
+no* maiorValorP(no* maior);
 
-void insereBinBusca(struct no* noh, int val)
+void insereBinBusca(no* noh, int val)
 {
 	if (raiz == NULL)
 	{
@@ -99,7 +97,7 @@ void removeBinBusca(no *noh, int val)
 	}
 }
 
-int menorValor(struct no* menor)
+int menorValor(no* menor)
 {
 	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
@@ -110,7 +108,7 @@ int menorValor(struct no* menor)
 	}
 }
 
-no* menorValorP(struct no* menor)
+no* menorValorP(no* menor)
 {
 	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
@@ -121,7 +119,7 @@ no* menorValorP(struct no* menor)
 	}
 }
 
-int maiorValor(struct no* maior)
+int maiorValor(no* maior)
 {
 	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
@@ -132,7 +130,7 @@ int maiorValor(struct no* maior)
 	}
 }
 
-no* maiorValorP(struct no* maior)
+no* maiorValorP(no* maior)
 {
 	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
@@ -143,7 +141,7 @@ no* maiorValorP(struct no* maior)
 	}
 }
 
-void inOrder(struct no* noh)
+void inOrder(no* noh)
 {
 	if (raiz == NULL)
 	{
@@ -160,7 +158,7 @@ void inOrder(struct no* noh)
 	}
 }
 
-void preOrder(struct no* noh)
+void preOrder(no* noh)
 {
 	if (raiz != NULL)
 	{
@@ -175,7 +173,7 @@ void preOrder(struct no* noh)
 	else cout << "AVL vazia" << endl;
 }
 
-void postOrder(struct no* noh)
+void postOrder(no* noh)
 {
 	if (raiz != NULL)
 	{
@@ -189,19 +187,19 @@ void postOrder(struct no* noh)
 	}
 	else cout << "AVL vazia" << endl;
 }
-void rotDirEsq(struct no* noh)
+void rotDirEsq(no* noh)
 {
 	rotDir(noh->direita);
 	rotEsq(noh);
 }
 
-void rotEsqDir(struct no* noh)
+void rotEsqDir(no* noh)
 {
 	rotEsq(noh->esquerda);
 	rotDir(noh);
 }
 
-void rotEsq(struct no* noh)
+void rotEsq(no* noh)
 {
 	if (noh == raiz) {
 		noh->direita->pai = NULL;
@@ -219,7 +217,7 @@ void rotEsq(struct no* noh)
 		noh->pai->pai->esquerda = noh->pai;
 }
 
-void rotDir(struct no* noh)
+void rotDir(no* noh)
 {
 	if (noh == raiz) {
 		noh->esquerda->pai = NULL;
@@ -237,7 +235,7 @@ void rotDir(struct no* noh)
 		noh->pai->pai->direita = noh->pai;
 }
 
-void fb(struct no* noh)
+void fb(no* noh)
 {
 	if (noh == NULL) return;
 	noh->fb = altura(noh->direita) - altura(noh->esquerda);
@@ -247,7 +245,7 @@ void fb(struct no* noh)
 		fb(noh->pai);
 }
 
-int altura(struct no* noh)
+int altura(no* noh)
 {
 	if (noh == NULL)
 		return 0;
@@ -257,7 +255,7 @@ int altura(struct no* noh)
 	return 1 + hd;
 }
 
-void balancear(struct no* noh) {
+void balancear(no* noh) {
 	if (noh->fb >= 2) {
 		int d = noh->fb - noh->direita->fb;
 		if (d < 0) d *= -1;
