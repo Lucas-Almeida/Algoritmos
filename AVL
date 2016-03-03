@@ -187,6 +187,7 @@ void postOrder(no* noh)
 	}
 	else cout << "AVL vazia" << endl;
 }
+
 void rotDirEsq(no* noh)
 {
 	rotDir(noh->direita);
