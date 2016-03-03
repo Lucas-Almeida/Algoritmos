@@ -9,8 +9,7 @@ struct no
 	int val, altura, fb;
 };
 
-no* raiz = nullptr;
-no* aux = nullptr;
+no* raiz = nullptr; no* aux = nullptr;
 
 void insereBinBusca(no* noh, int val);
 void removeBinBusca(no *noh, int val);
@@ -259,8 +258,7 @@ bool running = true;
 
 int main() 
 {
-	int option;
-	int key;
+	int option; int key;
 
 	cout << "MENU" << endl;
 	cout << "1: Inserir " << "\n" << "2: Excluir " << "\n" << "3: Em Ordem " << "\n" << "4: Pre Order " << "\n" << "5: Post Order " << "\n" <<
