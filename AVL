@@ -278,35 +278,23 @@ void balancear(struct no* noh) {
 	}
 }
 
-void imprimirFB(struct no* noh)
-{
-	if (raiz == NULL)
-		cout << "AVL vazia" << endl;
-	else {
-		if (noh->esquerda != NULL)
-			imprimirFB(noh->esquerda);
-		cout << noh->val << " tem fb " << noh->fb << endl;
-		if (noh->direita != NULL)
-			imprimirFB(noh->direita);
-	}
-}
-
 bool running = true;
 
-int main() {
+int main() 
+{
 	int option;
 	int key;
 
 	cout << "MENU" << endl;
 	cout << "1: Inserir " << "\n" << "2: Excluir " << "\n" << "3: Em Ordem " << "\n" << "4: Pre Order " << "\n" << "5: Post Order " << "\n" <<
-		"6: Menor Valor " << "\n" << "7: Maior valor" << "\n" << "8: Imprimir FB's: " << "\n" << "9: Sair" << endl;
+		"6: Menor Valor " << "\n" << "7: Maior valor" << "\n" << "8: Sair" << endl;
 
 	while (running)
 	{		
 		do {			
 			cout << "Escolha: ";
 			cin >> option;
-		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 && option != 7 && option != 8 && option != 9);
+		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 && option != 7 && option != 8);
 		switch (option)
 		{
 		case 1:
@@ -338,9 +326,6 @@ int main() {
 			cout << "Maior valor: " << maiorValor(raiz) << endl;
 			break;
 		case 8:
-			imprimirFB(raiz);
-			break;
-		case 9:
 			running = false;
 			break;
 		}
