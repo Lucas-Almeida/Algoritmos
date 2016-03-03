@@ -24,8 +24,8 @@ void rotEsq(no* noh);
 void balancear(no* noh);
 void fb(struct no* noh);
 int altura(struct no* noh);
-no* menorValorP(no* menor);
-no* maiorValorP(no* maior);
+no* menorValor(no* menor);
+no* maiorValor(no* maior);
 
 void insereBinBusca(no* noh, int val)
 {
@@ -97,18 +97,7 @@ void removeBinBusca(no *noh, int val)
 	}
 }
 
-int menorValor(no* menor)
-{
-	if (raiz == NULL) cout << "AVL vazia" << endl;
-	else
-	{
-		while (menor->esquerda != NULL)
-			menor = menor->esquerda;
-		return menor->val;
-	}
-}
-
-no* menorValorP(no* menor)
+no* menorValor(no* menor)
 {
 	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
@@ -119,18 +108,7 @@ no* menorValorP(no* menor)
 	}
 }
 
-int maiorValor(no* maior)
-{
-	if (raiz == NULL) cout << "AVL vazia" << endl;
-	else
-	{
-		while (maior->direita != NULL)
-			maior = maior->direita;
-		return maior->val;
-	}
-}
-
-no* maiorValorP(no* maior)
+no* maiorValor(no* maior)
 {
 	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
@@ -319,10 +297,12 @@ int main()
 			cout << endl;
 			break;
 		case 6:
-			cout << "Menor valor: " << menorValor(raiz) << endl;
+			no* menor = menorValor(raiz);
+			cout << "Menor valor: " << menor->val << endl;
 			break;
 		case 7:
-			cout << "Maior valor: " << maiorValor(raiz) << endl;
+			no* maior = maiorValor(raiz);
+			cout << "Maior valor: " << maior->val << endl;
 			break;
 		case 8:
 			running = false;
