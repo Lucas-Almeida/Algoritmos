@@ -70,10 +70,7 @@ void insereBinBusca(struct no* noh, int val)
 
 void removeBinBusca(no *noh, int val)
 {
-	if (raiz == NULL)
-	{
-		cout << "AVL vazia" << endl;
-	}
+	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else {
 		if (noh->val == val)
 		{
@@ -104,8 +101,7 @@ void removeBinBusca(no *noh, int val)
 
 int menorValor(struct no* menor)
 {
-	if (raiz == NULL)
-		cout << "AVL vazia" << endl;
+	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
 	{
 		while (menor->esquerda != NULL)
@@ -127,8 +123,7 @@ no* menorValorP(struct no* menor)
 
 int maiorValor(struct no* maior)
 {
-	if (raiz == NULL)
-		cout << "AVL vazia" << endl;
+	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
 	{
 		while (maior->direita != NULL)
@@ -139,10 +134,7 @@ int maiorValor(struct no* maior)
 
 no* maiorValorP(struct no* maior)
 {
-	if (raiz == NULL)
-	{
-		cout << "AVL vazia" << endl;
-	}
+	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else
 	{
 		while (maior->direita != NULL)
@@ -225,12 +217,10 @@ void rotEsq(struct no* noh)
 		noh->pai->pai->direita = noh->pai;
 	else if (noh->pai->pai != NULL)
 		noh->pai->pai->esquerda = noh->pai;
-	fb(noh);
 }
 
 void rotDir(struct no* noh)
 {
-	
 	if (noh == raiz) {
 		noh->esquerda->pai = NULL;
 		raiz = noh->esquerda;
@@ -245,8 +235,6 @@ void rotDir(struct no* noh)
 		noh->pai->pai->esquerda = noh->pai;
 	else if (noh->pai->pai != NULL)
 		noh->pai->pai->direita = noh->pai;
-
-	fb(noh);
 }
 
 void fb(struct no* noh)
@@ -277,7 +265,6 @@ void balancear(struct no* noh) {
 			rotEsq(noh);
 			fb(noh->esquerda);		
 		}
-		
 		else rotDirEsq(noh);
 	}
 	else {
@@ -287,7 +274,6 @@ void balancear(struct no* noh) {
 			rotDir(noh);
 			fb(noh->direita);
 		}
-		
 		else rotEsqDir(noh);
 	}
 }
@@ -295,9 +281,7 @@ void balancear(struct no* noh) {
 void imprimirFB(struct no* noh)
 {
 	if (raiz == NULL)
-	{
 		cout << "AVL vazia" << endl;
-	}
 	else {
 		if (noh->esquerda != NULL)
 			imprimirFB(noh->esquerda);
@@ -309,8 +293,7 @@ void imprimirFB(struct no* noh)
 
 bool running = true;
 
-int main()
-{
+int main() {
 	int option;
 	int key;
 
