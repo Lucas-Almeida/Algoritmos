@@ -23,6 +23,7 @@ void rotEsq(no* noh);
 void balancear(no* noh);
 void fb(struct no* noh);
 int altura(struct no* noh);
+bool busca(no* noh, int val);
 no* menorValor(no* menor);
 no* maiorValor(no* maior);
 
@@ -68,32 +69,44 @@ void insereBinBusca(no* noh, int val)
 void removeBinBusca(no *noh, int val)
 {
 	if (raiz == NULL) cout << "AVL vazia" << endl;
-	else {
-		if (noh->val == val)
-		{
-			if (noh->esquerda == NULL && noh->direita == NULL)
+	else {		
+		if (busca(noh, val) == false)
+			cout << "Valor nao existe." << endl;
+		else {
+			if (noh->val == val)
 			{
-				no* pai = noh->pai;
-				if (pai->esquerda == noh) pai->esquerda = NULL;
-				else pai->direita = NULL;
-				delete(noh);
+				if (noh->esquerda == NULL && noh->direita == NULL)
+				{
+					no* pai = noh->pai;
+					if (pai->esquerda == noh) pai->esquerda = NULL;
+					else pai->direita = NULL;
+					delete(noh);
+				}
+				else {
+					if (noh->esquerda != NULL)
+						aux = maiorValor(noh->esquerda);
+					else
+						aux = menorValor(noh->direita);
+					noh->val = aux->val;
+					removeBinBusca(aux, aux->val);
+				}
 			}
 			else {
-				if (noh->esquerda != NULL)
-					aux = maiorValor(noh->esquerda);
+				if (noh->val > val)
+					removeBinBusca(noh->esquerda, val);
 				else
-					aux = menorValor(noh->direita);
-				noh->val = aux->val;
-				removeBinBusca(aux, aux->val);
+					removeBinBusca(noh->direita, val);
 			}
-		}
-		else {
-			if (noh->val > val)
-				removeBinBusca(noh->esquerda, val);
-			else
-				removeBinBusca(noh->direita, val);
-		}
+		}		
 	}
+}
+
+bool busca(no* noh, int val)
+{	
+	if (noh == NULL) return false;
+	else if (noh->val == val) return true;
+	if (noh->val > val)	busca(noh->esquerda, val);
+	else busca(noh->direita, val);		
 }
 
 no* menorValor(no* menor)
@@ -120,18 +133,12 @@ no* maiorValor(no* maior)
 
 void inOrder(no* noh)
 {
-	if (raiz == NULL)
-	{
-		cout << "AVL vazia" << endl;
-	}
+	if (raiz == NULL) cout << "AVL vazia" << endl;	
 	else {
-		if (noh->esquerda != NULL)
-			inOrder(noh->esquerda);
-		if (noh != NULL)
-			cout << noh->val << " ";
+		if (noh->esquerda != NULL) inOrder(noh->esquerda);
+		if (noh != NULL) cout << noh->val << " ";
 		else cout << endl;
-		if (noh->direita != NULL)
-			inOrder(noh->direita);
+		if (noh->direita != NULL) inOrder(noh->direita);
 	}
 }
 
@@ -139,13 +146,10 @@ void preOrder(no* noh)
 {
 	if (raiz != NULL)
 	{
-		if (noh != NULL)
-			cout << noh->val << " ";
+		if (noh != NULL) cout << noh->val << " ";
 		else cout << endl;
-		if (noh->esquerda != NULL)
-			preOrder(noh->esquerda);
-		if (noh->direita != NULL)
-			preOrder(noh->direita);
+		if (noh->esquerda != NULL) preOrder(noh->esquerda);
+		if (noh->direita != NULL) preOrder(noh->direita);
 	}
 	else cout << "AVL vazia" << endl;
 }
@@ -154,12 +158,9 @@ void postOrder(no* noh)
 {
 	if (raiz != NULL)
 	{
-		if (noh->esquerda != NULL)
-			postOrder(noh->esquerda);
-		if (noh->direita != NULL)
-			postOrder(noh->direita);
-		if (noh != NULL)
-			cout << noh->val << " ";
+		if (noh->esquerda != NULL) postOrder(noh->esquerda);
+		if (noh->direita != NULL) postOrder(noh->direita); 
+		if (noh != NULL) cout << noh->val << " ";
 		else cout << endl;
 	}
 	else cout << "AVL vazia" << endl;
