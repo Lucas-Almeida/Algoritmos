@@ -72,17 +72,17 @@ void removeBinBusca(no *noh, int val)
 		if (noh->val == val)
 		{
 			if (noh->esquerda == NULL && noh->direita == NULL)
-			{				
+			{
 				no* pai = noh->pai;
 				if (pai->esquerda == noh) pai->esquerda = NULL;
 				else pai->direita = NULL;
 				delete(noh);
-			}			
+			}
 			else {
 				if (noh->esquerda != NULL)
-					aux = maiorValorP(noh->esquerda);
+					aux = maiorValor(noh->esquerda);
 				else
-					aux = menorValorP(noh->direita);
+					aux = menorValor(noh->direita);
 				noh->val = aux->val;
 				removeBinBusca(aux, aux->val);
 			}
@@ -239,7 +239,7 @@ void balancear(no* noh) {
 		if (d < 0) d *= -1;
 		if (d < 3) {
 			rotEsq(noh);
-			fb(noh->esquerda);		
+			fb(noh->esquerda);
 		}
 		else rotDirEsq(noh);
 	}
@@ -256,20 +256,34 @@ void balancear(no* noh) {
 
 bool running = true;
 
-int main() 
+int main()
 {
-	int option; int key;
+	int option; int key; no* maior; no* menor;
 
-	cout << "MENU" << endl;
-	cout << "1: Inserir " << "\n" << "2: Excluir " << "\n" << "3: Em Ordem " << "\n" << "4: Pre Order " << "\n" << "5: Post Order " << "\n" <<
-		"6: Menor Valor " << "\n" << "7: Maior valor" << "\n" << "8: Sair" << endl;
+	cout << "MENU" << '\n'
+		<< "1: Inserir " << "\n" 
+		<< "2: Excluir " << "\n" 
+		<< "3: Em Ordem " << "\n" 
+		<< "4: Pre Order " << "\n" 
+		<< "5: Post Order " << "\n" 
+		<< "6: Menor Valor " << "\n" 
+		<< "7: Maior valor" << "\n" 
+		<< "8: Sair" << endl;
 
 	while (running)
-	{		
-		do {			
-			cout << "Escolha: ";
+	{
+		do {
+			cout << "Entrada: ";
 			cin >> option;
+			while (cin.fail())
+			{
+				cout << "Entrada: ";
+				cin.clear();
+				cin.ignore(256, '\n');
+				cin >> option;
+			}
 		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 && option != 7 && option != 8);
+		
 		switch (option)
 		{
 		case 1:
@@ -295,11 +309,11 @@ int main()
 			cout << endl;
 			break;
 		case 6:
-			no* menor = menorValor(raiz);
+			menor = menorValor(raiz);
 			cout << "Menor valor: " << menor->val << endl;
 			break;
 		case 7:
-			no* maior = maiorValor(raiz);
+			maior = maiorValor(raiz);
 			cout << "Maior valor: " << maior->val << endl;
 			break;
 		case 8:
