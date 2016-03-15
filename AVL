@@ -81,6 +81,7 @@ void removeBinBusca(no *noh, int val)
 					if (pai->esquerda == noh) pai->esquerda = NULL;
 					else pai->direita = NULL;
 					delete(noh);
+					fb_noh(raiz);
 				}
 				else {
 					if (noh->esquerda != NULL)
@@ -255,6 +256,16 @@ void balancear(no* noh) {
 	}
 }
 
+void fetchRoot(no* noh)
+{
+	if(raiz == NULL) {
+		cout << "AVL vazia." << endl;
+	}
+	else {
+		cout << raiz->val << endl;
+	}
+}
+
 bool running = true;
 
 int main()
@@ -283,7 +294,8 @@ int main()
 				cin.ignore(256, '\n');
 				cin >> option;
 			}
-		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 && option != 7 && option != 8);
+		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 
+			&& option != 7 && option != 8 && option != 9);
 		
 		switch (option)
 		{
@@ -318,6 +330,9 @@ int main()
 			cout << "Maior valor: " << maior->val << endl;
 			break;
 		case 8:
+			fetchRoot(raiz);		
+			break;
+		case 9:
 			running = false;
 			break;
 		}
