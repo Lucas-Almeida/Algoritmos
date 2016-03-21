@@ -1,0 +1,57 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+
+using namespace std;
+
+bool IsSubstring(string palavra, string substring)
+{
+	for (int i = 0; i <= (palavra.size() - substring.size()); i++)
+	{
+		if (palavra.size() < substring.size())
+		{
+			cout << "Substring maior que palavra - ";
+			return false;
+		}
+
+		bool isSub = true;
+
+		for (int j = 0; isSub && j < substring.size(); j++)
+		{
+			if (palavra[i + j] != substring[j]) {
+				isSub = false;
+			}				
+		}
+
+		if (isSub)
+			return true;
+	}
+
+	return false;
+}
+
+int main() {
+
+	string line_;
+	ifstream file_("text.txt"); 
+	string str;
+	cout << "Substring: ";
+	cin >> str;
+			
+	if (file_.is_open())
+	{
+		while (getline(file_, line_))
+		{
+			cout << line_ << " ";
+			cout << " - " << IsSubstring(line_, str) << endl;
+		}
+		cout << endl;
+		file_.close();
+	}
+	else {
+		cout << "File is not open" << endl;
+	}
+
+	system("pause");
+	return 0;
+}
