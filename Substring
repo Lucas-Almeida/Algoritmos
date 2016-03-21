@@ -10,7 +10,7 @@ bool IsSubstring(string palavra, string substring)
 	{
 		if (palavra.size() < substring.size())
 		{
-			cout << "Substring maior que palavra - ";
+			cout << "- substring maior que palavra";
 			return false;
 		}
 
@@ -55,3 +55,4 @@ int main() {
 	system("pause");
 	return 0;
 }
+
