@@ -1,0 +1,74 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+#include "windows.h"
+
+using namespace std;
+
+int c = 0; // cont global
+
+bool IsSubstring(string palavra, string substring)
+{
+	for (c; c <= palavra.size(); c++)
+	{
+		if (palavra.size() < substring.size())
+		{
+			cout << "- substring maior que palavra";
+			return false;
+		}
+
+		bool isSub = true;
+
+		for (int j = 0; isSub && j < substring.size(); j++)
+		{
+			if (palavra[c + j] != substring[j]) {
+				isSub = false;
+			}
+		}
+
+		if (isSub) {
+            return true;
+		}
+	}
+
+	return false;
+}
+
+bool running = true;
+
+int main() {
+
+	string line_;
+	ifstream file_("text.txt");
+	string str;
+	cout << "Substring: ";
+	cin >> str;
+	int opcao;
+
+	if (file_.is_open())
+	{
+		while (!file_.eof())
+		{
+			getline(file_, line_);
+			line_ += line_;
+		}
+		cout << IsSubstring(line_, str) << endl;
+		do {
+            cout << "Continuar(insira continuacao da substring): ";
+            string str2;
+            cin >> str2;
+            str += str2;
+            cout << IsSubstring(line_, str) << endl;
+            cout << "Sair(1): ";
+            cin >> opcao;
+        } while (opcao != 1);
+		file_.close();
+	}
+	else {
+		cout << "File is not open" << endl;
+	}
+
+    int x;
+	while (cin >> x);
+	return 0;
+}
