@@ -1,0 +1,348 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <queue>
+
+using namespace std;
+
+int tempo;
+
+typedef struct no {
+	long int d;//capacidade de 4bits
+	int cor;//0-branco , 1-cinza , 2-preto
+	int val;
+	int pai;
+	int tempo, tempoF;
+	struct no * prox, *aresta;
+}t_no;
+
+typedef t_no * Node;
+
+
+//Assinaturas de metodos
+void dfs_visita(Node vertice);
+Node busca(Node lista, int n);
+
+// Busca em largura
+void bfs(Node lista) {
+
+	queue<int> f;//Fila
+	Node n;
+	Node vertice;
+	Node aux = lista;
+	Node aresta;
+	int u;
+
+	//Atribui cor branca, distancia infinito e pai nulo a todos os vertices
+	for (n = aux; n != NULL; n = n->prox) {
+		n->cor = 0;
+		n->d = -1; //Infinito
+		n->pai = -1; //NULL
+	}
+
+	if (aux != NULL) {
+		aux->cor = 1;
+		aux->d = 0;
+		aux->pai = -1;
+		cout << "Vertice visitado: " << aux->val << "\t" << "Pai: " << aux->pai << "\t" << "Distancia: " << aux->d << "\n";
+	}
+
+	f.push(aux->val);//adiciona na fila
+
+	while (!f.empty()) {
+		u = f.front();//primeiro elemento
+		for (n = aux; n->val != u; n = n->prox);// Econtrar o vertice na qual quero
+
+		aresta = n->aresta;
+
+		for (aresta; aresta != NULL; aresta = aresta->prox) {
+			vertice = busca(aux, aresta->val);
+
+			if (vertice->cor == 0) {
+				vertice->cor = 1;
+				vertice->d = n->d + 1;
+				vertice->pai = u;
+				f.push(vertice->val);
+				cout << "Vertice Visitado: " << vertice->val << "\t" << "Pai: " << vertice->pai << "\t" << "Distancia: " << vertice->d << "\n";
+			}
+		}
+		f.pop();
+		n->cor = 2;
+	}
+}
+
+/* Busca em Pronfundidade */
+void dfs(Node lista) {
+	tempo = 0;
+	Node aux = lista;
+
+	for (aux; aux != NULL; aux = aux->prox) {
+		aux->cor = 0;
+		aux->pai = -1;
+		aux->tempo = 0;
+		aux->tempoF = 0;
+	}
+
+	aux = lista;
+
+	for (aux; aux != NULL; aux = aux->prox) {
+		if (aux->cor == 0) {
+			dfs_visita(aux);
+		}
+	}
+
+	for (lista; lista != NULL; lista = lista->prox) {
+
+		cout << "Vertice: " << lista->val << "\tTempo Inicial: " << lista->tempo << "\tTempo Final: " << lista->tempoF << endl;
+	}
+}
+
+void dfs_visita(Node vertice) {
+
+	Node aresta = NULL;
+	Node vertAdj = NULL;
+
+	if (vertice != NULL) {
+		cout << "Visitou: " << vertice->val << endl;
+		vertice->cor = 1;
+		tempo++;
+		vertice->tempo = tempo;
+		aresta = vertice->aresta;
+	}
+
+	for (aresta; aresta != NULL; aresta = aresta->prox) {
+		vertAdj = busca(vertice, aresta->val);
+		if (vertAdj != NULL && vertAdj->cor == 0) {
+			vertAdj->pai = vertAdj->val;
+			dfs_visita(vertAdj);
+		}
+	}
+
+	vertice->cor = 2;
+	tempo++;
+	vertice->tempoF = tempo;
+}
+
+
+/**
+*   Cria um nó
+*   Retorna o nó criado
+**/
+Node cria_no(int x) {
+	Node novo = new t_no;
+	novo->val = x;
+	novo->prox = NULL;
+	novo->aresta = NULL;
+	return novo;
+}
+
+/**
+*   Insere os vértices do grafo
+*   Retorna o ínicio da lista
+**/
+Node inserir(Node lista, int x) {
+	if (lista == NULL) {
+		return cria_no(x);
+	}
+
+	Node aux = lista;
+	// percorre a lista até o fim, para adicionar o novo vertice.
+	while (aux != NULL) {
+		if (aux->prox == NULL) {
+			aux->prox = cria_no(x);
+			return lista;
+		}
+		aux = aux->prox;
+	}
+	return lista;
+}
+
+
+/**
+*   Imprime a lista de adjacência
+**/
+void imprime(Node lista) {
+	Node aux = lista;
+	printf("\n====INICIO DA LISTA====\n\n");
+	//Percorre a lista
+	while (aux != NULL) {
+		printf("%d -> ", aux->val);
+		// Verifica se tem adjacencias
+		if (aux->aresta != NULL) {
+			Node aux2 = aux->aresta;
+			// Percorre e imprime as adjacencias
+			while (aux2 != NULL) {
+				printf("[%d] -> ", aux2->val);
+				aux2 = aux2->prox;
+			}
+			printf("[NULL]");
+		}
+		else {
+			printf("[NULL]");
+		}
+		printf("\n");
+		aux = aux->prox;
+
+	}
+	printf("\n=====FIM DA LISTA======\n\n");
+}
+
+/**
+*   Faz a busca na lista retornando o nó que está sendo procurado
+*   Retorna NULL se não encontrar nada.
+**/
+Node busca(Node lista, int n) {
+	Node aux = lista;
+	while (aux != NULL) {
+		if (aux->val == n) {
+			return aux;
+		}
+		aux = aux->prox;
+	}
+	return NULL;
+}
+
+
+void cria_aresta(Node lista, int p1, int p2) {
+
+	//Direcionado
+	Node aux = busca(lista, p1);
+	if (aux->aresta == NULL) {
+		aux->aresta = cria_no(p2);
+	}
+	else {
+		aux = aux->aresta;
+		while (1) {
+			if (aux->prox == NULL) {
+				aux->prox = cria_no(p2);
+				break;
+			}
+			aux = aux->prox;
+		}
+	}
+}
+
+/**
+*   Verifica se existe uma aresta de v1 a v2
+*   Retorna 1 se existir a aresta, caso contrário
+*   retorna 0
+**/
+int verifica_aresta(Node lista, int p1, int p2) {
+
+	Node aux = busca(lista, p1)->aresta;
+	aux = busca(aux, p2);
+	if (aux != NULL) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+
+
+int main(int argc, char** argv) {
+
+	Node lista = NULL;
+	Node n = NULL;
+	int v1, v2;
+	int op;
+
+
+	do {
+
+		system("cls");
+		cout << "\n========= LISTA DE ADJACENCIAS ===========\n";
+		cout << "\n\t1- ADICIONAR VERTICE \n";
+		cout << "\t2- ADICIONAR ARESTA \n";
+		cout << "\t3- EXIBIR LISTA \n";
+		cout << "\t4- BFS - BUSCA EM LARGURA\n";
+		cout << "\t5- DFS - BUSCA EM PROFUNDIDADE\n";
+		cout << "\t6- SAIR\n";
+		cout << "\n==========================================\n";
+		cout << "\t"; cin >> op;
+
+		switch (op) {
+		case 1:
+			cout << "\n========= ADICIONAR VERTICE ===========\n";
+			cout << "Digite o vertice a ser adicionado: ";
+			cin >> v1;
+			if (busca(lista, v1) == NULL) // Evita adicionar um vertice que ja existe
+				lista = inserir(lista, v1);
+			else
+				cout << "Esse vertice ja existe!" << endl;
+
+			break;
+
+		case 2:
+			if (lista != NULL) {
+				cout << "\n========= ADICIONAR ARESTA ===========\n";
+				cout << "Vertice(Origem): ";
+				cin >> v1;
+				cout << "Vertice(Destino): ";
+				cin >> v2;
+
+				if (busca(lista, v1) != NULL && busca(lista, v2) != NULL) // Verifica se os vertices citados existem
+					if (verifica_aresta(lista, v1, v2) == 0) // verifica se já ha conecções dos vertices citados
+						cria_aresta(lista, v1, v2);
+					else
+						cout << "Essa Aresta ja existe!" << endl;
+				else
+					cout << "Pelo menos um dos vertices informados nao existe!\n";
+			}
+			else {
+
+				cout << "Lista vazia\n";
+			}
+
+			break;
+
+
+		case 3:
+			if (lista != NULL) {
+				cout << "\n========= EXIBIR LISTA ===========\n";
+				imprime(lista);
+			}
+			else {
+				cout << "Lista vazia\n";
+			}
+			system("pause");
+			break;
+
+		case 4:
+			if (lista != NULL) {
+				cout << "\n========= BFS - BUSCA EM LARGURA ===========\n";
+				bfs(lista);
+			}
+			else {
+
+				cout << "Lista vazia\n";
+			}
+			system("pause");
+			break;
+
+		case 5:
+			if (lista != NULL) {
+				cout << "\n========= DFS - BUSCA EM PROFUNDIDADE ===========\n";
+				dfs(lista);
+			}
+			else {
+
+				cout << "Lista vazia\n";
+			}
+			system("pause");
+			break;
+
+		case 6:
+			op = 6;
+			break;
+
+		default:
+			cout << "Entre com uma opcao valida\n";
+		}
+
+	} while (op != 6);
+
+	return 0;
+}
