@@ -1,0 +1,162 @@
+#include <iostream>
+#include <vector>
+#include <stdlib.h>
+#include <time.h>
+
+using namespace std;
+
+vector<int> v;
+
+void fillVector(int n) {
+	srand((unsigned)time(NULL));
+	for (int i = 0; i < n; i++) {
+		int a = rand() % 100 + 1;
+		v.push_back(a);
+	}
+}
+
+void printVector() {
+	cout << endl;
+	if (!v.empty()) {
+		for (int i = 0; i < v.size(); i++) {
+			cout << "V[" << i << "] = " << v[i] << endl;
+		}
+	}
+	else {
+		cout << "Empty vector" << endl;
+	}
+
+	cout << endl;
+}
+
+bool linearSearch(int n) {
+	cout << endl;
+	if (!v.empty()) {
+		for (int i = 0; i < v.size(); i++) {
+			if (v[i] == n) {
+				return true;
+			}
+		}
+	}
+	else {
+		cout << "Empty vector" << endl;
+	}
+
+	cout << endl;
+
+	return false;
+}
+
+void bubbleSort() {
+	if (!v.empty()) {
+		int aux;
+		for (int i = 0; i < v.size() - 1; i++) {
+			for (int j = 0; j < v.size() - 1; j++) {
+				if (v[j] > v[j + 1]) {
+					aux = v[j];
+					v[j] = v[j + 1];
+					v[j + 1] = aux;
+				}
+			}
+		}
+	}
+	else {
+		cout << "Empty vector" << endl;
+	}
+}
+
+void binarySearch() {
+
+}
+
+bool running = true;
+
+int main() {
+	cout << "MENU" << endl;
+	cout << "1 - Criar vetor" << endl;
+	cout << "2 - Listar vetor" << endl;
+	cout << "3 - Desalocar vetor" << endl;
+	cout << "4 - Buscar Linear" << endl;
+	cout << "5 - Bubble Sort" << endl;
+	cout << "6 - Binary Search" << endl;
+	cout << "7 - Sair" << endl;
+	
+	while (running) {
+		cout << "Escolha: ";
+		int option; 		
+		cin >> option;		
+				
+		switch (option) {
+			case 1:
+				cout << "Tamanho do vetor: ";
+				int n;
+				
+				while (!(cin >> n))
+				{
+					cout << "Tamanho do vetor: ";
+					cin.clear();
+					cin.ignore(1000, '\n');					
+				}
+
+				fillVector(n);
+				printVector();
+				break;
+
+			case 2:
+				printVector();				
+				break;
+
+			case 3:				
+				v.clear();
+				cout << endl;
+				cout << "Vetor desalocado." << endl;
+				cout << endl;
+				break;
+
+			case 4:
+				cout << "Busca: ";
+				int number;
+				while (!(cin >> number))
+				{
+					cout << "Tamanho do vetor: ";
+					cin.clear();
+					cin.ignore(1000, '\n');
+				}
+				
+				if (linearSearch(number)) {
+					cout << "Found." << endl;
+				}
+				else {
+					cout << "404 Not Found." << endl;
+				}					
+				break;
+
+			case 5:
+				if (!v.empty()) {
+					bubbleSort();
+					printVector();
+				}
+				else {
+					cout << "Empty vector." << endl;
+				}
+							
+				break;
+
+			case 6:
+				if (!v.empty()) {
+					binarySearch();
+					printVector();
+				}
+				else {
+					cout << "Empty vector." << endl;
+				}
+				break;
+			case 7:
+				running = false;
+				break;
+		}	
+		
+	}
+
+	return 0;
+}
