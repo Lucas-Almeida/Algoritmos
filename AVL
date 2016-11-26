@@ -1,4 +1,7 @@
 #include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
 #include <stdlib.h>
 
 using namespace std;
@@ -9,10 +12,19 @@ struct no
 	int val, altura, fb;
 };
 
+struct nodeBST
+{
+	nodeBST* pai = nullptr; nodeBST* esquerda = nullptr; nodeBST* direita = nullptr;
+	int val;
+};
+
 no* raiz = nullptr; no* aux = nullptr;
+nodeBST* BSTraiz = nullptr; nodeBST* BSTaux = nullptr;
 
 void insereBinBusca(no* noh, int val);
+void BSTinsereBinBusca(nodeBST* noh, int val);
 void removeBinBusca(no *noh, int val);
+void BSTremoveBinBusca(nodeBST *noh, int val);
 void inOrder(no* noh);
 void preOrder(no* noh);
 void postOrder(no* noh);
@@ -24,8 +36,14 @@ void balancear(no* noh);
 void fb(struct no* noh);
 int altura(struct no* noh);
 bool busca(no* noh, int val);
+bool BSTbusca(nodeBST* noh, int val);
 no* menorValor(no* menor);
+nodeBST* BSTmenorValor(nodeBST* menor);
 no* maiorValor(no* maior);
+nodeBST* BSTmaiorValor(nodeBST* maior);
+void inOrder(nodeBST* noh);
+void preOrder(nodeBST* noh);
+void postOrder(nodeBST* noh);
 
 void insereBinBusca(no* noh, int val)
 {
@@ -69,7 +87,7 @@ void insereBinBusca(no* noh, int val)
 void removeBinBusca(no *noh, int val)
 {
 	if (raiz == NULL) cout << "AVL vazia" << endl;
-	else {		
+	else {
 		if (busca(noh, val) == false)
 			cout << "Valor nao existe." << endl;
 		else {
@@ -77,11 +95,17 @@ void removeBinBusca(no *noh, int val)
 			{
 				if (noh->esquerda == NULL && noh->direita == NULL)
 				{
-					no* pai = noh->pai;
-					if (pai->esquerda == noh) pai->esquerda = NULL;
-					else pai->direita = NULL;
-					delete(noh);
-					fb_noh(raiz);
+					if (noh == raiz) {
+						delete(noh);
+						raiz = nullptr;
+					}
+					else {
+						no* pai = noh->pai;
+						if (pai->esquerda == noh) pai->esquerda = NULL;
+						else pai->direita = NULL;
+						delete(noh);
+						fb(raiz);
+					}					
 				}
 				else {
 					if (noh->esquerda != NULL)
@@ -98,16 +122,16 @@ void removeBinBusca(no *noh, int val)
 				else
 					removeBinBusca(noh->direita, val);
 			}
-		}		
+		}
 	}
 }
 
 bool busca(no* noh, int val)
-{	
+{
 	if (noh == NULL) return false;
 	else if (noh->val == val) return true;
 	if (noh->val > val)	busca(noh->esquerda, val);
-	else busca(noh->direita, val);		
+	else busca(noh->direita, val);
 }
 
 no* menorValor(no* menor)
@@ -134,7 +158,7 @@ no* maiorValor(no* maior)
 
 void inOrder(no* noh)
 {
-	if (raiz == NULL) cout << "AVL vazia" << endl;	
+	if (raiz == NULL) cout << "AVL vazia" << endl;
 	else {
 		if (noh->esquerda != NULL) inOrder(noh->esquerda);
 		if (noh != NULL) cout << noh->val << " ";
@@ -160,7 +184,7 @@ void postOrder(no* noh)
 	if (raiz != NULL)
 	{
 		if (noh->esquerda != NULL) postOrder(noh->esquerda);
-		if (noh->direita != NULL) postOrder(noh->direita); 
+		if (noh->direita != NULL) postOrder(noh->direita);
 		if (noh != NULL) cout << noh->val << " ";
 		else cout << endl;
 	}
@@ -258,7 +282,7 @@ void balancear(no* noh) {
 
 void fetchRoot(no* noh)
 {
-	if(raiz == NULL) {
+	if (raiz == NULL) {
 		cout << "AVL vazia." << endl;
 	}
 	else {
@@ -266,21 +290,200 @@ void fetchRoot(no* noh)
 	}
 }
 
+void BSTinsereBinBusca(nodeBST* noh, int val)
+{
+	if (BSTraiz == NULL)
+	{
+		BSTraiz = new struct nodeBST;
+		BSTraiz->val = val;		
+	}
+	else
+	{
+		if (noh->val >= val)
+		{
+			if (noh->esquerda == NULL)
+			{
+				noh->esquerda = new struct nodeBST;
+				noh->esquerda->val = val;
+				noh->esquerda->pai = noh;				
+			}
+			else
+				BSTinsereBinBusca(noh->esquerda, val);
+		}
+		else
+		{
+			if (noh->direita == NULL)
+			{
+				noh->direita = new struct nodeBST;
+				noh->direita->val = val;
+				noh->direita->pai = noh;				
+			}
+			else
+			{
+				BSTinsereBinBusca(noh->direita, val);
+			}
+		}
+	}
+}
+
+void BSTremoveBinBusca(nodeBST *noh, int val)
+{
+	if (BSTraiz == NULL) cout << "AVL vazia" << endl;
+	else {
+		if (BSTbusca(noh, val) == false)
+			cout << "Valor nao existe." << endl;
+		else {
+			if (noh->val == val)
+			{
+				if (noh->esquerda == NULL && noh->direita == NULL)
+				{
+					if (noh == BSTraiz) {
+						delete(noh);
+						BSTraiz = nullptr;
+					}
+					else {
+						nodeBST* pai = noh->pai;
+						if (pai->esquerda == noh) pai->esquerda = NULL;
+						else pai->direita = NULL;
+						delete(noh);						
+					}
+				}
+				else {
+					if (noh->esquerda != NULL)
+						BSTaux = BSTmaiorValor(noh->esquerda);
+					else
+						BSTaux = BSTmenorValor(noh->direita);
+					noh->val = BSTaux->val;
+					BSTremoveBinBusca(BSTaux, BSTaux->val);
+				}
+			}
+			else {
+				if (noh->val > val)
+					BSTremoveBinBusca(noh->esquerda, val);
+				else
+					BSTremoveBinBusca(noh->direita, val);
+			}
+		}
+	}
+}
+
+bool BSTbusca(nodeBST* noh, int val)
+{
+	if (noh == NULL) return false;
+	else if (noh->val == val) return true;
+	if (noh->val > val)	BSTbusca(noh->esquerda, val);
+	else BSTbusca(noh->direita, val);
+}
+
+nodeBST* BSTmenorValor(nodeBST* menor)
+{
+	if (BSTraiz == NULL) cout << "AVL vazia" << endl;
+	else
+	{
+		while (menor->esquerda != NULL)
+			menor = menor->esquerda;
+		return menor;
+	}
+}
+
+nodeBST* BSTmaiorValor(nodeBST* maior)
+{
+	if (BSTraiz == NULL) cout << "AVL vazia" << endl;
+	else
+	{
+		while (maior->direita != NULL)
+			maior = maior->direita;
+		return maior;
+	}
+}
+
+void inOrder(nodeBST* noh)
+{
+	if (BSTraiz == NULL) cout << "AVL vazia" << endl;
+	else {
+		if (noh->esquerda != NULL) inOrder(noh->esquerda);
+		if (noh != NULL) cout << noh->val << " ";
+		else cout << endl;
+		if (noh->direita != NULL) inOrder(noh->direita);
+	}
+}
+
+void preOrder(nodeBST* noh)
+{
+	if (BSTraiz != NULL)
+	{
+		if (noh != NULL) cout << noh->val << " ";
+		else cout << endl;
+		if (noh->esquerda != NULL) preOrder(noh->esquerda);
+		if (noh->direita != NULL) preOrder(noh->direita);
+	}
+	else cout << "AVL vazia" << endl;
+}
+
+void postOrder(nodeBST* noh)
+{
+	if (BSTraiz != NULL)
+	{
+		if (noh->esquerda != NULL) postOrder(noh->esquerda);
+		if (noh->direita != NULL) postOrder(noh->direita);
+		if (noh != NULL) cout << noh->val << " ";
+		else cout << endl;
+	}
+	else cout << "AVL vazia" << endl;
+}
+
+
 bool running = true;
 
 int main()
 {
-	int option; int key; no* maior; no* menor;
+	/*
+	std::ifstream  data("avl.csv");
+
+	std::string line;
+
+
+	while(std::getline(data,line))
+	{
+	std::stringstream lineStream(line);
+	std::string cell;
+	while(std::getline(lineStream, cell, ','))
+	{
+	insereBinBusca(raiz, cell);
+	}
+	}
+	
+
+	ifstream file("AVL.csv"); // declare file stream: http://www.cplusplus.com/reference/iostream/ifstream/
+	string value;
+	int total;
+	int node;
+	if (file.good())
+	{
+		getline(file, value, ','); // read a string until next comma: http://www.cplusplus.com/reference/string/getline/
+		if (value == "avl") {
+			// construir avl
+		}
+
+		getline(file, value, ',');
+		total = stoi(value); // converte string para int
+
+		while (file.good()) {
+			getline(file, value, ',');
+			node = stoi(value);
+			insereBinBusca(raiz, node);
+		}
+
+		cout << string(value, 1, value.length() - 2); // display value removing the first and the last character from it
+	}
+	*/
+
+	int option; int key; no* maior; no* menor; nodeBST* BSTmaior; nodeBST* BSTmenor;
 
 	cout << "MENU" << '\n'
-		<< "1: Inserir " << "\n" 
-		<< "2: Excluir " << "\n" 
-		<< "3: Em Ordem " << "\n" 
-		<< "4: Pre Order " << "\n" 
-		<< "5: Post Order " << "\n" 
-		<< "6: Menor Valor " << "\n" 
-		<< "7: Maior valor" << "\n" 
-		<< "8: Sair" << endl;
+		<< "1: AVL " << "\n"
+		<< "2: Binary Search Tree " << "\n"
+		<< "3: Red-Black " << endl;
 
 	while (running)
 	{
@@ -294,49 +497,139 @@ int main()
 				cin.ignore(256, '\n');
 				cin >> option;
 			}
-		} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6 
-			&& option != 7 && option != 8 && option != 9);
-		
-		switch (option)
+		} while (option != 1 && option != 2 && option != 3);
+
+		switch (option) 
 		{
 		case 1:
-			cout << "Insira uma chave: ";
-			cin >> key;
-			insereBinBusca(raiz, key);
+			cout << "MENU" << '\n'
+				<< "1: Inserir " << "\n"
+				<< "2: Excluir " << "\n"
+				<< "3: Em Ordem " << "\n"
+				<< "4: Pre Order " << "\n"
+				<< "5: Post Order " << "\n"
+				<< "6: Menor Valor " << "\n"
+				<< "7: Maior valor" << "\n"
+				<< "8: Exibir root" << "\n"
+				<< "9: Exit" << endl;
+
+			while (running)
+			{
+				do {
+					cout << "Entrada: ";
+					cin >> option;
+					while (cin.fail())
+					{
+						cout << "Entrada: ";
+						cin.clear();
+						cin.ignore(256, '\n');
+						cin >> option;
+					}
+				} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6
+					&& option != 7 && option != 8 && option != 9);
+
+				switch (option)
+				{
+					case 1:
+						cout << "Insira uma chave: ";
+						cin >> key;
+						insereBinBusca(raiz, key);
+						break;
+					case 2:
+						cout << "Insira uma chave: ";
+						cin >> key;
+						removeBinBusca(raiz, key);
+						break;
+					case 3:
+						inOrder(raiz);
+						cout << endl;
+						break;
+					case 4:
+						preOrder(raiz);
+						cout << endl;
+						break;
+					case 5:
+						postOrder(raiz);
+						cout << endl;
+						break;
+					case 6:
+						menor = menorValor(raiz);
+						cout << "Menor valor: " << menor->val << endl;
+						break;
+					case 7:
+						maior = maiorValor(raiz);
+						cout << "Maior valor: " << maior->val << endl;
+						break;
+					case 8:
+						fetchRoot(raiz);
+						break;
+					case 9:
+						running = false;
+						break;
+				}
+			}
 			break;
 		case 2:
-			cout << "Insira uma chave: ";
-			cin >> key;
-			removeBinBusca(raiz, key);
+			cout << "MENU" << '\n'
+				<< "1: Inserir " << "\n"
+				<< "2: Excluir " << "\n"
+				<< "3: Em Ordem " << "\n"
+				<< "4: Pre Order " << "\n"
+				<< "5: Post Order " << "\n"				
+				<< "6: Exit" << endl;
+
+			while (running)
+			{
+				do {
+					cout << "Entrada: ";
+					cin >> option;
+					while (cin.fail())
+					{
+						cout << "Entrada: ";
+						cin.clear();
+						cin.ignore(256, '\n');
+						cin >> option;
+					}
+				} while (option != 1 && option != 2 && option != 3 && option != 4 && option != 5 && option != 6
+					&& option != 7 && option != 8 && option != 9);
+		
+				switch (option)
+				{
+				case 1:
+					cout << "Insira uma chave: ";
+					cin >> key;
+					BSTinsereBinBusca(BSTraiz, key);
+					break;
+				case 2:
+					cout << "Insira uma chave: ";
+					cin >> key;
+					BSTremoveBinBusca(BSTraiz, key);
+					break;
+				case 3:
+					inOrder(BSTraiz);
+					cout << endl;
+					break;
+				case 4:
+					preOrder(BSTraiz);
+					cout << endl;
+					break;
+				case 5:
+					postOrder(BSTraiz);
+					cout << endl;
+					break;
+				case 6:
+					running = false;
+					break;
+				}
+			}
 			break;
 		case 3:
-			inOrder(raiz);
-			cout << endl;
-			break;
-		case 4:
-			preOrder(raiz);
-			cout << endl;
-			break;
-		case 5:
-			postOrder(raiz);
-			cout << endl;
-			break;
-		case 6:
-			menor = menorValor(raiz);
-			cout << "Menor valor: " << menor->val << endl;
-			break;
-		case 7:
-			maior = maiorValor(raiz);
-			cout << "Maior valor: " << maior->val << endl;
-			break;
-		case 8:
-			fetchRoot(raiz);		
-			break;
-		case 9:
-			running = false;
+			
 			break;
 		}
 	}
+
+	
 	system("pause");
 	return 0;
 }
