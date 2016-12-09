@@ -684,7 +684,7 @@ void RBtree::del(int value)
 void RBtree::delfix(node *p)
 {
 	node *s;
-	while (p != root&&p->color == 'b')
+	while (p != root && p->color == 'b')
 	{
 		if (p->parent->left == p)
 		{
@@ -1151,19 +1151,25 @@ int main()
 							cin.ignore(256, '\n');
 							cin >> option;
 						}
-					} while (option < 1 || option > 6);
+					} while (option < 1 || option > 6);					
 					switch (option)
 					{
 					case 1:
+						cout << "Insira uma chave: ";
+						cin >> key;
 						obj.insert(key);
 						cout << "\nNode Inserted.\n";
 						total++;
 						break;
 					case 2:
+						cout << "Insira uma chave: ";
+						cin >> key;
 						obj.del(key);
 						total--;
 						break;
 					case 3:
+						cout << "Insira uma chave: ";
+						cin >> key;
 						obj.search(key);
 						break;
 					case 4:
