@@ -1,0 +1,189 @@
+program main
+    implicit none
+
+    type Aluno
+        integer matricula
+        character nome*20
+    end type Aluno
+
+    type Professor
+        integer :: codigo
+        character (len=50) :: nome
+    end type Professor
+
+    type Disciplina
+        integer id
+        character (len=50) :: nome
+    end type
+
+    type Turma
+        integer codigo
+        type(Aluno), dimension(5) :: alunos
+        type(Disciplina) :: disciplina
+        type(Professor) :: professor
+    end type
+
+    !Listas
+    type(Aluno), dimension(10) :: listaAlunos
+    type(Professor), dimension(10) :: listaProfessores
+    type(Disciplina), dimension(10) :: listaDisciplinas
+    type(Turma), dimension(10) :: listaTurmas
+
+    !Tipos
+    type(Aluno) :: a
+    type(Professor) :: p
+    type(Disciplina) :: d
+    type(Turma) :: t
+
+    !Variáveis
+    integer :: prox_aluno = 1 !array começam em 1
+    integer :: prox_prof = 1
+    integer :: totalAlunos = 0, posicao = 0
+
+    integer re_i, pick
+
+    do while (pick < 13)
+        write(*,*) "--------- Cadastro Escola ---------"
+
+        write(*,*) "1. Cadastrar Aluno"
+        write(*,*) "2. Cadastrar Professor"
+        write(*,*) "3. Cadastrar Disciplina"
+        write(*,*) "4. Alterar Aluno"
+        write(*,*) "5. Alterar Professor"
+        write(*,*) "6. Alterar Disciplina"
+        write(*,*) "7. Excluir Aluno"
+        write(*,*) "8. Excluir Professor"
+        write(*,*) "9. Excluir Disciplina"
+        write(*,*) "10. Listar Alunos"
+        write(*,*) "11. Listar Professores"
+        write(*,*) "12. Listar Disciplinas"
+        write(*,*) "13. Sair"
+        print *, ""
+        print *, "Escolha uma opcao:"
+        read(*,*) pick
+
+        SELECT CASE (pick)
+            CASE (1)
+                call cadAluno(a)
+            CASE (2)
+                !busca
+                write(*,*) "Digite a matricula que deseja buscar: "
+                read(*,*) a%matricula
+                posicao = buscarAluno(a)
+
+                if (buscarAluno(a) .EQ. -1) then
+                    write(*,*) "Aluno nao encontrado!"
+                else
+                    write(*,*)"Matricula: ", listaAlunos(posicao)%matricula
+                    write(*,*)"Nome: ", listaAlunos(posicao)%nome
+                end if
+            CASE (10)
+                call listarAlunos()
+                ! Limpa a tela
+                call execute_command_line("cls")
+
+            CASE (3)
+                write(*,*) "Digite a matricula que deseja editar: "
+                read(*,*) a%matricula
+                posicao = buscarAluno(a)
+
+                if (buscarAluno(a) .EQ. -1) then
+                    write(*,*) "Aluno nao encontrado!"
+                else
+                    write(*,*) "Nome: "
+                    read(*,*) a%nome
+                    listaAlunos(posicao)%nome = a%nome
+                end if
+                ! Limpa a tela
+                call execute_command_line("cls")
+
+            CASE (4)
+                write(*,*) "Digite a matricula do aluno a ser excluido: "
+                read(*,*) a%matricula
+                posicao = buscarAluno(a)
+
+                if (buscarAluno(a) .EQ. -1) then
+                    write(*,*) "Aluno nao encontrado!"
+                else
+                    removerAluno()
+                end if
+                ! Limpa a tela
+                call execute_command_line("cls")
+
+            CASE DEFAULT
+
+            END SELECT
+    end do
+
+    contains
+
+    subroutine cadAluno (a)
+        implicit none
+        type(Aluno), intent(inout) :: a
+        if (totalAlunos .LT. 10) then
+            write(*,*) "Nome do aluno: "
+            read(*,*) a%nome
+            a%matricula = prox_aluno ! matricula = proximo aluno
+            listaAlunos(prox_aluno) = a
+            prox_aluno = prox_aluno + 1
+            totalAlunos = totalAlunos + 1
+            write(*,*)"Sucesso: Aluno inserido!"
+            call listarAlunos()
+        else
+            write(*,*) "Não há vagas!"
+        end if
+    end subroutine
+
+    subroutine cadProfessor (p)
+        implicit none
+        type(Professor), intent(inout) :: p
+        write(*,*) "Nome do professor: "
+        read(*,*) p%nome
+        p%codigo = prox_prof ! matricula = proximo professor
+        listaProfessores(prox_prof) = p
+       ! write(*,*) "Professor inserido"
+        !write(*,*) listaProfessores(p)%nome
+        prox_prof = prox_prof + 1
+    end subroutine
+
+    subroutine removerAluno ()
+        write(*,*) "Aluno removido"
+    end subroutine
+
+    subroutine listarAlunos()
+        implicit none
+        integer contador
+
+        write(*,*)""
+        write(*,*) "*** ALUNOS *** "
+
+        do contador = 1, totalAlunos, +1
+            write(*,*) "No: ", contador
+            write(*,*) "Matricula: ", listaAlunos(contador)%matricula
+            write(*,*) "Nome: ", listaAlunos(contador)%nome
+            write(*,*) "....................................."
+        end do
+
+        write(*,*) "TOTAL: ", totalAlunos
+    end subroutine listarAlunos
+
+    function buscarAluno(a)
+        implicit none
+        type(Aluno), intent(in) :: a
+        integer  buscarAluno
+        integer  contador
+        buscarAluno = -1
+
+        do contador = 1, totalAlunos, +1
+            if(a%matricula == listaAlunos(contador)%matricula) then
+                buscarAluno = contador
+            end if
+        end do
+
+        return
+    end function buscarAluno
+end
+
+
+
+
