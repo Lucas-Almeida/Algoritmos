@@ -18,6 +18,7 @@ program main
 
     type Turma
         integer codigo
+        character (len=50) :: nome
         type(Aluno), dimension(5) :: alunos
         type(Disciplina) :: disciplina
         type(Professor) :: professor
@@ -36,130 +37,438 @@ program main
     type(Turma) :: t
 
     !Variáveis
-    integer :: prox_aluno = 1 !array começam em 1
-    integer :: prox_prof = 1
-    integer :: totalAlunos = 0, posicao = 0
 
-    integer re_i, pick
+    integer :: prox_prof = 1, prox_disc = 1, prox_aluno = 1, prox_turma = 1
+    integer :: totalAlunos = 0, totalDisciplinas = 0, totalProfessores = 0, totalTurmas = 0, posicao = 0
+    integer re_i
 
-    do while (pick < 13)
-        write(*,*) "--------- Cadastro Escola ---------"
-
-        write(*,*) "1. Cadastrar Aluno"
-        write(*,*) "2. Cadastrar Professor"
-        write(*,*) "3. Cadastrar Disciplina"
-        write(*,*) "4. Alterar Aluno"
-        write(*,*) "5. Alterar Professor"
-        write(*,*) "6. Alterar Disciplina"
-        write(*,*) "7. Excluir Aluno"
-        write(*,*) "8. Excluir Professor"
-        write(*,*) "9. Excluir Disciplina"
-        write(*,*) "10. Listar Alunos"
-        write(*,*) "11. Listar Professores"
-        write(*,*) "12. Listar Disciplinas"
-        write(*,*) "13. Sair"
-        print *, ""
-        print *, "Escolha uma opcao:"
-        read(*,*) pick
-
-        SELECT CASE (pick)
-            CASE (1)
-                call cadAluno(a)
-            CASE (2)
-                !busca
-                write(*,*) "Digite a matricula que deseja buscar: "
-                read(*,*) a%matricula
-                posicao = buscarAluno(a)
-
-                if (buscarAluno(a) .EQ. -1) then
-                    write(*,*) "Aluno nao encontrado!"
-                else
-                    write(*,*)"Matricula: ", listaAlunos(posicao)%matricula
-                    write(*,*)"Nome: ", listaAlunos(posicao)%nome
-                end if
-            CASE (10)
-                call listarAlunos()
-                ! Limpa a tela
-                call execute_command_line("cls")
-
-            CASE (3)
-                write(*,*) "Digite a matricula que deseja editar: "
-                read(*,*) a%matricula
-                posicao = buscarAluno(a)
-
-                if (buscarAluno(a) .EQ. -1) then
-                    write(*,*) "Aluno nao encontrado!"
-                else
-                    write(*,*) "Nome: "
-                    read(*,*) a%nome
-                    listaAlunos(posicao)%nome = a%nome
-                end if
-                ! Limpa a tela
-                call execute_command_line("cls")
-
-            CASE (4)
-                write(*,*) "Digite a matricula do aluno a ser excluido: "
-                read(*,*) a%matricula
-                posicao = buscarAluno(a)
-
-                if (buscarAluno(a) .EQ. -1) then
-                    write(*,*) "Aluno nao encontrado!"
-                else
-                    removerAluno()
-                end if
-                ! Limpa a tela
-                call execute_command_line("cls")
-
-            CASE DEFAULT
-
-            END SELECT
-    end do
+    ! CHAMADA DO MENU PRINCIPAL
+    call menu_main()
 
     contains
 
-    subroutine cadAluno (a)
+!----------------------- MENU PRINCIPAL --------------------
+
+    subroutine menu_main ()
+
+    integer :: c = 0
+    integer pick
+    call execute_command_line("cls")
+        do while (c == 0)
+
+            write(*,*) ""
+            write(*,*) "----------------------------------------"
+            write(*,*) "--------- Menu Cadastro Escola ---------"
+            write(*,*) "----------------------------------------"
+            write(*,*) ""
+            write(*,*) "1 - Menu Aluno"
+            write(*,*) "2 - Menu Professor"
+            write(*,*) "3 - Menu Disciplina"
+            write(*,*) "4 - Menu Turma"
+            write(*,*) "5 - Sair"
+            print *, ""
+            print *, "Escolha uma opcao:"
+            read(*,*) pick
+
+            SELECT CASE (pick)
+                CASE (1)
+                    call menu_aluno()
+                CASE (2)
+                    call menu_professor()
+                CASE (3)
+                    call menu_disciplina()
+                CASE (4)
+                    call menu_turma()
+                CASE (5)
+                    pick = 1
+
+                CASE DEFAULT
+                    write(*,*) "Não é uma opção valida"
+            END SELECT
+        end do
+
+    end subroutine
+
+!----------------------- MENU ALUNO --------------------
+
+    subroutine menu_aluno ()
+        integer :: c2 = 0
+        integer pick2
+
+        call execute_command_line("cls")
+         do while (c2 == 0)
+            write(*,*) ""
+            write(*,*) "----------------------------------------"
+            write(*,*) "------------- Menu Aluno ---------------"
+            write(*,*) "----------------------------------------"
+            write(*,*) ""
+            write(*,*) "1 - Cadastrar Aluno"
+            write(*,*) "2 - Editar Aluno"
+            write(*,*) "3 - Excluir Aluno"
+            write(*,*) "4 - Buscar Aluno"
+            write(*,*) "5 - Listar Alunoa"
+            write(*,*) "6 - Voltar"
+            print *, ""
+            print *, "Escolha uma opcao:"
+            read(*,*) pick2
+
+            SELECT CASE (pick2)
+                CASE (1)
+                    call cadastrar('a')
+                CASE (2)
+                    call editarAluno()
+
+                CASE (3)
+                    call excluirAluno()
+
+                CASE (4)
+                    !------ buscar aluno --------
+                    write(*,*) "Digite a matricula do aluno que deseja buscar: "
+                    read(*,*) a%matricula
+                    posicao = buscarAluno(a)
+
+                    if (posicao .EQ. -1) then
+                        write(*,*) "Aluno nao encontrado!"
+                    else
+                        write(*,*)"----- Aluno Encontrado ------"
+                        write(*,*)""
+                        write(*,*)"Matricula: ", listaAlunos(posicao)%matricula
+                        write(*,*)"Nome: ", listaAlunos(posicao)%nome
+                    end if
+
+                CASE (5)
+                    call listarAlunos()
+
+                CASE (6)
+                    call menu_main()
+                    c2 = 1
+
+                CASE DEFAULT
+                    write(*,*) "Não é uma opção valida"
+            END SELECT
+         end do
+    end subroutine
+
+
+
+    !----------------------- MENU PROFESSOR --------------------
+
+    subroutine menu_professor ()
+
+        integer :: c3 = 0
+        integer pick3
+        call execute_command_line("cls")
+         do while (c3 == 0)
+            write(*,*) ""
+            write(*,*) "----------------------------------------"
+            write(*,*) "------------ Menu Professor ------------"
+            write(*,*) "----------------------------------------"
+            write(*,*) ""
+            write(*,*) "1 - Cadastrar Professor"
+            write(*,*) "2 - Editar Professor"
+            write(*,*) "3 - Excluir Professor"
+            write(*,*) "4 - Buscar Professor"
+            write(*,*) "5 - Listar Professores"
+            write(*,*) "6 - Voltar"
+            print *, ""
+            print *, "Escolha uma opcao:"
+            read(*,*) pick3
+
+            SELECT CASE (pick3)
+                CASE (1)
+                    call cadastrar('p')
+
+                CASE (2)
+                   call editarProfessor()
+
+                CASE (3)
+                    call excluirProfessor()
+
+                CASE (4)
+                    !------ buscar professor --------
+                    write(*,*) "Digite a matricula do professor que deseja buscar: "
+                    read(*,*) p%codigo
+                    posicao = buscarProfessor(p)
+
+                    if (posicao .EQ. -1) then
+                        write(*,*) "Professor nao encontrado!"
+                    else
+                        write(*,*)"----- Professor Encontrado ------"
+                        write(*,*)""
+                        write(*,*)"Código: ", listaProfessores(posicao)%codigo
+                        write(*,*)"Nome: ", listaProfessores(posicao)%nome
+                    end if
+
+                CASE (5)
+                    call listarProfessores()
+
+                CASE (6)
+                    call menu_main()
+                    c3 = 1
+
+                CASE DEFAULT
+                    write(*,*) "Não é uma opção valida"
+            END SELECT
+         end do
+    end subroutine
+
+    !----------------------- MENU DISCIPLINA --------------------
+
+    subroutine menu_disciplina ()
+
+        integer :: c4 = 0
+        integer pick4
+        call execute_command_line("cls")
+         do while (c4 == 0)
+            write(*,*) ""
+            write(*,*) "----------------------------------------"
+            write(*,*) "----------- Menu Disciplina ------------"
+            write(*,*) "----------------------------------------"
+            write(*,*) ""
+            write(*,*) "1 - Cadastrar Disciplina"
+            write(*,*) "2 - Editar Disciplina"
+            write(*,*) "3 - Excluir Disciplina"
+            write(*,*) "4 - Buscar Disciplina"
+            write(*,*) "5 - Listar Disciplina"
+            write(*,*) "6 - Voltar"
+            print *, ""
+            print *, "Escolha uma opcao:"
+            read(*,*) pick4
+
+            SELECT CASE (pick4)
+                CASE (1)
+                    call cadastrar('d')
+
+                CASE (2)
+                    call editarDisciplina()
+
+                CASE (3)
+                    call excluirDisciplina()
+
+                CASE (4)
+                    !------ buscar Disciplina --------
+                    write(*,*) "Digite o id da disciplina que deseja buscar: "
+                    read(*,*) d%id
+                    posicao = buscarDisciplina(d)
+
+                    if (posicao .EQ. -1) then
+                        write(*,*) "Disciplina nao encontrada"
+                    else
+                        write(*,*)"----- Disciplina Encontrada ------"
+                        write(*,*)""
+                        write(*,*)"Id: ", listaDisciplinas(posicao)%id
+                        write(*,*)"Nome: ", listaDisciplinas(posicao)%nome
+                    end if
+
+                CASE (5)
+                    call listarDisciplinas()
+
+                CASE (6)
+                    call menu_main()
+                    c4 = 1
+
+                CASE DEFAULT
+                    write(*,*) "Não é uma opção valida"
+            END SELECT
+         end do
+    end subroutine
+
+
+
+    !----------------------- MENU TURMA --------------------
+
+    subroutine menu_turma ()
+
+        integer :: c5 = 0
+        integer pick5
+        call execute_command_line("cls")
+         do while (c5 == 0)
+            write(*,*) ""
+            write(*,*) "----------------------------------------"
+            write(*,*) "----------- Menu Turma ------------"
+            write(*,*) "----------------------------------------"
+            write(*,*) ""
+            write(*,*) "1 - Cadastrar Turma"
+            write(*,*) "2 - Editar Turma"
+            write(*,*) "3 - Excluir Turma"
+            write(*,*) "4 - Buscar Turma"
+            write(*,*) "5 - Listar Turmas"
+            write(*,*) "6 - Voltar"
+            print *, ""
+            print *, "Escolha uma opcao:"
+            read(*,*) pick5
+
+            SELECT CASE (pick5)
+                CASE (1)
+                    call cadastrarTurma()
+
+                CASE (2)
+                    !call editarTurma()
+
+                CASE (3)
+                    !call excluirTurma()
+
+                CASE (4)
+                    !------ buscar Turma --------
+                    write(*,*) "Digite o codigo da turma que deseja buscar: "
+                    read(*,*) t%codigo
+                    posicao = buscarTurma(t)
+
+                    if (posicao .EQ. -1) then
+                        write(*,*) "Turma nao encontrada"
+                    else
+                        write(*,*)"----- Turma Encontrada ------"
+                        write(*,*)""
+                        write(*,*)"Codigo: ", listaTurmas(posicao)%codigo
+                        write(*,*)"Nome: ", listaTurmas(posicao)%nome
+                        d = listaTurmas(posicao)%disciplina
+                        write(*,*)"Disciplina: ", d%nome
+                        p = listaTurmas(posicao)%professor
+                        write(*,*)"Professor: ", p%nome
+                    end if
+
+                CASE (5)
+                    !call listarTurma()
+
+                CASE (6)
+                    call menu_main()
+                    c5 = 1
+
+                CASE DEFAULT
+                    write(*,*) "Não é uma opção valida"
+            END SELECT
+         end do
+    end subroutine
+
+
+!----------------------- FUNÇÃO CADASTRAR --------------------
+    !Recebe como o parametro o modo para saber o tipo de cadastro: a = aluno, p = professor, d = disciplina, t = turma
+    !Isto é um comentário
+    subroutine cadastrar (modo)
         implicit none
-        type(Aluno), intent(inout) :: a
-        if (totalAlunos .LT. 10) then
-            write(*,*) "Nome do aluno: "
-            read(*,*) a%nome
-            a%matricula = prox_aluno ! matricula = proximo aluno
-            listaAlunos(prox_aluno) = a
-            prox_aluno = prox_aluno + 1
-            totalAlunos = totalAlunos + 1
-            write(*,*)"Sucesso: Aluno inserido!"
-            call listarAlunos()
+!       type(Aluno), intent(inout) :: a
+        character :: modo
+        call execute_command_line("cls")
+
+        SELECT CASE (modo)
+            CASE ('a')
+                if (totalAlunos .LT. 10) then
+                    write(*,*) ""
+                    write(*,*) "--------Cadastro de Aluno --------"
+                    write(*,*) "Digite o nome do aluno: "
+                    read(*,*) a%nome
+                    a%matricula = prox_aluno ! matricula = proximo aluno
+                    listaAlunos(prox_aluno) = a
+                    prox_aluno = prox_aluno + 1
+                    totalAlunos = totalAlunos + 1
+                    write(*,*)"Sucesso: Aluno inserido!"
+
+                else
+                    write(*,*) "Limite de alunos"
+                end if
+
+            CASE ('p')
+                if (totalProfessores .LT. 10) then
+                    write(*,*) ""
+                    write(*,*) "--------Cadastro de Professor--------"
+                    write(*,*) "Digite o nome do professor: "
+                    read(*,*) p%nome
+                    p%codigo = prox_prof ! matricula = proximo professor
+                    listaProfessores(prox_prof) = p
+                    prox_prof = prox_prof + 1
+                    totalProfessores = totalProfessores + 1
+                    write(*,*)"Sucesso: Professor inserido!"
+
+                 else
+                    write(*,*) "Limite de professor"
+                end if
+
+            CASE ('d')
+                if (totalDisciplinas .LT. 10) then
+                    write(*,*) "--------Cadastro de disciplina--------"
+                    write(*,*) "Digite o nome da disciplina: "
+                    read(*,*) d%nome
+                    d%id = prox_disc ! matricula = proximo professor
+                    listaDisciplinas(prox_disc) = d
+                    prox_disc = prox_disc + 1
+                    totalDisciplinas = totalDisciplinas + 1
+                    write(*,*)"Sucesso: Disciplina inserida!"
+                 else
+                    write(*,*) "Limite de disciplina"
+                end if
+
+            CASE DEFAULT
+
+        END SELECT
+
+    end subroutine
+
+
+
+     !----------------------- EDITAR ALUNO --------------------
+    subroutine editarAluno ()
+        write(*,*) "Digite a matricula do aluno que deseja editar: "
+        read(*,*) a%matricula
+        posicao = buscarAluno(a)
+
+        if (posicao .EQ. -1) then
+            write(*,*) "Aluno nao encontrado!"
         else
-            write(*,*) "Não há vagas!"
+            write(*,*) "Digite o novo nome: "
+            read(*,*) a%nome
+            listaAlunos(posicao)%nome = a%nome
         end if
-    end subroutine
+        write(*,*) "Sucesso: Aluno editado "
+    end subroutine editarAluno
 
-    subroutine cadProfessor (p)
-        implicit none
-        type(Professor), intent(inout) :: p
-        write(*,*) "Nome do professor: "
-        read(*,*) p%nome
-        p%codigo = prox_prof ! matricula = proximo professor
-        listaProfessores(prox_prof) = p
-       ! write(*,*) "Professor inserido"
-        !write(*,*) listaProfessores(p)%nome
-        prox_prof = prox_prof + 1
-    end subroutine
 
-    subroutine removerAluno ()
-        write(*,*) "Aluno removido"
-    end subroutine
+    !----------------------- EXCLUIR ALUNO --------------------
+    subroutine excluirAluno()
+            implicit none
+            integer :: contador
+            type(Aluno) :: aluno_aux
 
+            write(*,*) "Digite o codigo do registro que deseja excluir: "
+            read(*,*) a%matricula
+            posicao = buscarAluno(a)
+
+            if(posicao .EQ. -1) then
+                call system('CLS')
+                write(*,*)"Erro: Aluno nao encontrado!"
+            else
+                call system('CLS')
+                do contador = posicao, totalAlunos, +1
+                    if(contador .EQ. size(listaAlunos)) then
+                        aluno_aux%matricula = -1
+                        aluno_aux%nome = ''
+                    else
+                        aluno_aux = listaAlunos(contador + 1)
+                    end if
+
+                    listaAlunos(contador) = aluno_aux
+                end do
+
+                prox_aluno = prox_aluno - 1
+                totalAlunos = totalAlunos - 1
+
+                write(*,*) "Sucesso: Aluno excluido!"
+            end if
+
+        end subroutine excluirAluno
+
+
+    !----------------------- LISTAR ALUNOS --------------------
     subroutine listarAlunos()
         implicit none
         integer contador
+        call execute_command_line("cls")
 
         write(*,*)""
-        write(*,*) "*** ALUNOS *** "
+        write(*,*) "------ Lista de Alunos -----"
 
         do contador = 1, totalAlunos, +1
-            write(*,*) "No: ", contador
-            write(*,*) "Matricula: ", listaAlunos(contador)%matricula
+            write(*,*) "....................................."
+            write(*,*) "Matricula: " , listaAlunos(contador)%matricula
             write(*,*) "Nome: ", listaAlunos(contador)%nome
             write(*,*) "....................................."
         end do
@@ -167,23 +476,323 @@ program main
         write(*,*) "TOTAL: ", totalAlunos
     end subroutine listarAlunos
 
+
+    !----------------------- BUSCAR ALUNO --------------------
+
     function buscarAluno(a)
         implicit none
         type(Aluno), intent(in) :: a
-        integer  buscarAluno
-        integer  contador
+        integer :: buscarAluno, contador
         buscarAluno = -1
+        call execute_command_line("cls")
 
-        do contador = 1, totalAlunos, +1
-            if(a%matricula == listaAlunos(contador)%matricula) then
-                buscarAluno = contador
+            do contador = 1, totalAlunos, +1
+                if(a%matricula == listaAlunos(contador)%matricula) then
+                    buscarAluno = contador
+                end if
+            end do
+        return
+    end function buscarAluno
+
+
+     !----------------------- EDITAR PROFESSOR --------------------
+    subroutine editarProfessor ()
+        write(*,*) "Digite a matricula do professor que deseja editar: "
+        read(*,*) p%codigo
+        posicao = buscarProfessor(p)
+
+        if (posicao .EQ. -1) then
+            write(*,*) "Professor nao encontrado!"
+        else
+            write(*,*) "Digite o novo nome: "
+            read(*,*) p%nome
+            listaProfessores(posicao)%nome = p%nome
+        end if
+        write(*,*) "Sucesso: Aluno editado "
+    end subroutine editarProfessor
+
+    !----------------------- EXCLUIR PROFESSOR --------------------
+    subroutine excluirProfessor()
+            implicit none
+            integer :: contador
+            type(Professor) :: prof_aux
+
+            write(*,*) "Digite o codigo do professor que deseja excluir: "
+            read(*,*) p%codigo
+            posicao = buscarProfessor(p)
+
+            if(posicao .EQ. -1) then
+                call system('CLS')
+                write(*,*)"Erro: Professor nao encontrado!"
+            else
+                call system('CLS')
+                do contador = posicao, totalAlunos, +1
+                    if(contador .EQ. size(listaProfessores)) then
+                        prof_aux%codigo = -1
+                        prof_aux%nome = ''
+                    else
+                        prof_aux = listaProfessores(contador + 1)
+                    end if
+
+                    listaProfessores(contador) = prof_aux
+                end do
+
+                prox_prof = prox_prof - 1
+                totalProfessores = totalProfessores - 1
+
+                write(*,*) "Sucesso: Professor excluido!"
+            end if
+
+        end subroutine excluirProfessor
+
+
+
+         !----------------------- BUSCAR PROFESSOR --------------------
+
+    function buscarProfessor(p)
+        implicit none
+        type(Professor), intent(in) :: p
+        integer :: buscarProfessor, contador
+        buscarProfessor = -1
+        call execute_command_line("cls")
+
+            do contador = 1, totalProfessores, +1
+                if(p%codigo == listaProfessores(contador)%codigo) then
+                    buscarProfessor = contador
+                end if
+            end do
+
+        return
+    end function buscarProfessor
+
+     !----------------------- LISTAR PROFESSORES --------------------
+
+    subroutine listarProfessores()
+        implicit none
+        integer contador
+        call execute_command_line("cls")
+
+        write(*,*)""
+        write(*,*) "------ Lista de Professores -----"
+
+        do contador = 1, totalProfessores, +1
+            write(*,*) "....................................."
+            write(*,*) "Codigo: ", listaProfessores(contador)%codigo
+            write(*,*) "Nome: ", listaProfessores(contador)%nome
+            write(*,*) "....................................."
+        end do
+
+        write(*,*) "TOTAL: ", totalProfessores
+    end subroutine listarProfessores
+
+
+
+
+     !----------------------- BUSCAR DISCIPLINA --------------------
+
+    function buscarDisciplina(d)
+        implicit none
+        type(Disciplina), intent(in) :: d
+        integer :: buscarDisciplina, contador
+        buscarDisciplina = -1
+        call execute_command_line("cls")
+
+            do contador = 1, totalDisciplinas, +1
+                if(d%id == listaDisciplinas(contador)%id) then
+                    buscarDisciplina = contador
+                end if
+            end do
+        return
+    end function buscarDisciplina
+
+     !----------------------- LISTAR DISCIPLINAS --------------------
+
+    subroutine listarDisciplinas()
+        implicit none
+        integer contador
+        call execute_command_line("cls")
+
+        write(*,*)""
+        write(*,*) "------ Lista de Disciplinas -----"
+
+        do contador = 1, totalDisciplinas, +1
+            write(*,*) "....................................."
+            write(*,*) "Codigo: ", listaDisciplinas(contador)%id
+            write(*,*) "Nome: ", listaDisciplinas(contador)%nome
+            write(*,*) "....................................."
+        end do
+
+        write(*,*) "TOTAL: ", totalDisciplinas
+    end subroutine listarDisciplinas
+
+
+    !----------------------- EXCLUIR DISCIPLINA --------------------
+    subroutine excluirDisciplina()
+            implicit none
+            integer :: contador
+            type(Disciplina) :: disc_aux
+
+            write(*,*) "Digite o codigo do professor que deseja excluir: "
+            read(*,*) d%id
+            posicao = buscarDisciplina(d)
+
+            if(posicao .EQ. -1) then
+                call system('CLS')
+                write(*,*)"Erro: Disciplina nao encontrada!"
+            else
+                call system('CLS')
+                do contador = posicao, totalDisciplinas, +1
+                    if(contador .EQ. size(listaDisciplinas)) then
+                        disc_aux%id = -1
+                        disc_aux%nome = ''
+                    else
+                        disc_aux = listaDisciplinas(contador + 1)
+                    end if
+
+                    listaDisciplinas(contador) = disc_aux
+                end do
+
+                prox_disc = prox_disc - 1
+                totalDisciplinas = totalDisciplinas - 1
+
+                write(*,*) "Sucesso: Disciplina excluida!"
+            end if
+
+        end subroutine excluirDisciplina
+
+
+         !----------------------- EDITAR DISCIPLINA --------------------
+    subroutine editarDisciplina ()
+        write(*,*) "Digite o id da disciplina que deseja editar: "
+        read(*,*) d%id
+        posicao = buscarDisciplina(d)
+
+        if (posicao .EQ. -1) then
+            write(*,*) "Disciplina nao encontrada!"
+        else
+            write(*,*) "Digite o novo nome: "
+            read(*,*) d%nome
+            listaDisciplinas(posicao)%nome = d%nome
+        end if
+        write(*,*) "Sucesso: Disciplina editada! "
+    end subroutine editarDisciplina
+
+
+    !----------------------- CADASTRAR TURMA --------------------
+
+    subroutine cadastrarTurma ()
+
+        integer :: c6 = 0, c7 = 0, c8 = 0, alunoTurmaPosicao = 0, adicionarAluno = 0
+        call execute_command_line("cls")
+        write(*,*) ""
+        write(*,*) "--------Cadastro de Turma --------"
+        write(*,*) "----------------------------------"
+        write(*,*) ""
+        write(*,*) "--------Detalhes da Turma --------"
+        write(*,*) "Digite o nome da Turma: "
+        read(*,*) t%nome
+        t%codigo = prox_turma
+
+
+        write(*,*) ""
+        write(*,*) "--------Disciplina da Turma --------"
+        write(*,*) ""
+
+
+        do while (c6 == 0)
+            write(*,*) "Digite um id de disciplina ja cadastrada para associar a esta turma:"
+            read(*,*) d%id
+            posicao = buscarDisciplina(d)
+
+            if (posicao .EQ. -1) then
+                write(*,*) "Disciplina nao encontrada tente novamente"
+            else
+                write(*,*)"----- Disciplina Encontrada ------"
+                write(*,*)""
+                write(*,*)"Id: ", listaDisciplinas(posicao)%id
+                write(*,*)"Nome: ", listaDisciplinas(posicao)%nome
+                write(*,*)"----- A Disciplina foi adicionada ------"
+                d = listaDisciplinas(posicao)
+                t%disciplina = d
+                c6 = 1
             end if
         end do
 
+        do while (c7 == 0)
+            write(*,*) "Digite o codigo de um professor ja cadastrado para associar-lo a esta turma:"
+            read(*,*) p%codigo
+            posicao = buscarProfessor(p)
+
+            if (posicao .EQ. -1) then
+                write(*,*) "Professor nao encontrado tente novamente"
+            else
+                write(*,*)"----- Professor Encontrado ------"
+                write(*,*)""
+                write(*,*)"Codigo: ", listaProfessores(posicao)%codigo
+                write(*,*)"Nome: ", listaProfessores(posicao)%nome
+                write(*,*)"----- O professor foi adicionado ------"
+                p = listaProfessores(posicao)
+                t%professor = p
+                c7 = 1
+            end if
+        end do
+
+        do while (c8 == 0)
+            write(*,*) "Matricula de aluno a ser adicionado: "
+            read(*,*) a%matricula
+            posicao = buscarAluno(a)
+
+            if (posicao .EQ. -1) then
+                write(*,*) "Aluno não encontrado."
+            else
+                do while (alunoTurmaPosicao .NE. 5)
+                    write(*,*)"----- Aluno Encontrado ------"
+                    write(*,*)""
+                    write(*,*)"Matrícula: ", listaAlunos(posicao)%matricula
+                    write(*,*)"Nome: ", listaAlunos(posicao)%nome
+                    write(*,*)"----- Aluno adicionado ------"
+                    a = listaAlunos(posicao)
+                    t%alunos(alunoTurmaPosicao) = a
+                    alunoTurmaPosicao = alunoTurmaPosicao + 1
+                    write(*,*) "Adicionar outro (s = 0 / n = qualquer valor) "
+                    read(*,*) adicionarAluno
+                    SELECT CASE (adicionarAluno)
+                        CASE (0)
+                            if (adicionarAluno .NE. 0) then
+                            c8 = 1
+                            else
+                                write(*,*) "Matricula de aluno a ser adicionado: "
+                                read(*,*) a%matricula
+                                posicao = buscarAluno(a)
+
+                                if (posicao .EQ. -1) then
+                                    write(*,*) "Aluno não encontrado."
+                                end if
+                           end if
+                    END SELECT
+                end do
+            end if
+        end do
+
+        listaTurmas(prox_turma) = t
+        prox_turma = prox_turma + 1
+        totalTurmas = totalTurmas + 1
+    end subroutine cadastrarTurma
+
+          !----------------------- BUSCAR TURMA --------------------
+
+    function buscarTurma(t)
+        implicit none
+        type(Turma), intent(in) :: t
+        integer :: buscarTurma, contador
+        buscarTurma = -1
+        call execute_command_line("cls")
+            do contador = 1, totalTurmas, +1
+                if(t%codigo == listaTurmas(contador)%codigo) then
+                    buscarTurma = contador
+                end if
+            end do
+
         return
-    end function buscarAluno
+    end function buscarTurma
 end
-
-
-
-
